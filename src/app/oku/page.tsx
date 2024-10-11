@@ -1,7 +1,7 @@
 export default function page() {
     return (
         <>
-            <p>Hello</p>
+            <p>永沼です</p>
         </>
     )
 }
