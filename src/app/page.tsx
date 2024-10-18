@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 import style from './styles/startPage/main.module.css'
-import under from './styles/startPage/under.module.css'
-
 
 export default function StartPage() {
-  const [state, setState] = useState(0)
+  const [state, setState] = useState(0);
   const [count, setCount] = useState(0);
   return (
     <div className={style.wrap}>
@@ -23,11 +21,3 @@ export default function StartPage() {
   );
 }
 
-function UnderTab() {
-  return (
-    <div className={under.wrap}>
-
-    </div>
-
-  )
-}
