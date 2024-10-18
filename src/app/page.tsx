@@ -26,7 +26,7 @@ export function TitleText() {
   return (
     <div className={style.under}>
       <h2>Under Tab</h2>
-      <p>Under tab content</p>
+        <p>Under tab content</p>
     </div>
   );
 }
