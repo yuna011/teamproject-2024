@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react';
-import style from './styles/startPage/main.module.css'
+import UnderTab from './component/startPage/underTab';
+import style from './styles/startPage/main.module.css';
 
 export default function StartPage() {
-  const [state, setState] = useState(0);
+  // const [state, setState] = useState(0);
   const [count, setCount] = useState(0);
   return (
     <div className={style.wrap}>
@@ -21,3 +22,11 @@ export default function StartPage() {
   );
 }
 
+export function TitleText() {
+  return (
+    <div className={style.under}>
+      <h2>Under Tab</h2>
+      <p>Under tab content</p>
+    </div>
+  );
+}
