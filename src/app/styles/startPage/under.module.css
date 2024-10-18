@@ -36,3 +36,9 @@
     border-radius: 5px;
     background: #fff;
 } */
+
+.instagram {
+    background: #833ab4;
+    background: linear-gradient(to right,
+            #833ab4, #fd1d1d, #fcb045);
+}
