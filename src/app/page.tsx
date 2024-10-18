@@ -5,28 +5,48 @@ import UnderTab from './component/startPage/underTab';
 import style from './styles/startPage/main.module.css';
 
 export default function StartPage() {
-  // const [state, setState] = useState(0);
+  const text = [
+    {
+      mainTitle: 'すれちがいが、',
+      subTitle: 'ショッピングを',
+      secondTitle: 'もっと楽しくする。'
+    },
+    {
+      mainTitle: '森尾ゆうな',
+      subTitle: '森尾ゆうなです',
+      secondTitle: 'こんにちは'
+    },
+    {
+      mainTitle: '共産主義',
+      subTitle: '共産主義です',
+      secondTitle: 'こんにちは'
+    },
+  ];
+
   const [count, setCount] = useState(0);
+
+  // countがtextの範囲を超えないようにする
+  const currentText = text[count % text.length];
+
   return (
-    <div className={style.wrap}>
-      <h1>Start Page</h1>
-      <p>Welcome to the start page</p>
-      <p>
-        <button onClick={() => setCount(count + 1)}>Click me</button>
-      </p>
-      <p>
-        <a href="/page-2">Go to page 2</a>
-      </p>
-      <UnderTab />
+    <div className={`${style.wrap} px-12 pt-12 relative`}>
+      <TitleText mainTitle={currentText.mainTitle} subTitle={currentText.subTitle} secondTitle={currentText.secondTitle} />
+      <button onClick={() => setCount(count + 1)} className={style.nextButton}></button>
+
+      <button onClick={() => setCount(count + 1)} className={style.nextButton}></button>
+      {/* <UnderTab /> */}
     </div>
   );
 }
 
-export function TitleText() {
+export function TitleText({ mainTitle, subTitle, secondTitle }) {
   return (
-    <div className={style.under}>
-      <h2>Under Tab</h2>
-      <p>Under tab content</p>
+    <div className={`${style.titleWrap} font-bold`}>
+      <h1 className='text-2xl'>
+        <span className='text-5xl whitespace-nowrap block pb-0'>{mainTitle}</span><br />
+        <span className='block'>{subTitle}</span><br />
+        <span className='block'>{secondTitle}</span>
+      </h1>
     </div>
   );
 }
