@@ -34,7 +34,7 @@ export default function StartPage() {
       <button onClick={() => setCount(count + 1)} className={style.nextButton}></button>
 
       <button onClick={() => setCount(count + 1)} className={style.nextButton}></button>
-      {/* <UnderTab /> */}
+      <UnderTab />
     </div>
   );
 }
