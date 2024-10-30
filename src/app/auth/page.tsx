@@ -3,6 +3,7 @@
 // AuthForm.tsx
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'next/navigation'; // useRouterをインポート
 import { auth } from '../../../firebaseConfig';
 
 const AuthForm: React.FC = () => {
@@ -11,6 +12,7 @@ const AuthForm: React.FC = () => {
     const [isRegister, setIsRegister] = useState(true); // 登録モードかログインモードかを切り替える
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const router = useRouter(); // useRouterフックを使用
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,6 +31,9 @@ const AuthForm: React.FC = () => {
                 setSuccess('ログインに成功しました。');
                 console.log('Logged in user:', userCredential.user);
             }
+
+            // 成功した場合に /profile へリダイレクト
+            router.push('/profile');
         } catch (error) {
             setError('操作に失敗しました。');
             console.error('Auth error:', error);

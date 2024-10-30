@@ -3,7 +3,7 @@
 // UserProfileForm.tsx
 import React, { useState } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
-import { db, auth } from '../../../firebaseConfig'; // Firebaseの設定をインポート
+import { db, auth, storage } from '../../../firebaseConfig'; // Firebaseの設定をインポート
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 interface UserProfile {

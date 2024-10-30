@@ -2,6 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage'; // Storageのインポート
 
 const firebaseConfig = {
     apiKey: "AIzaSyA-rqL_AtvjJ9Id7lLBQHHeXGXxrxvJUmw",  // ウェブ API キー
@@ -16,5 +17,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app); // Storageの初期化
 
-export { db, auth };
+export { db, auth, storage };

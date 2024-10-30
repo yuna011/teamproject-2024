@@ -1,3 +1,4 @@
+// src/app/layout.tsx
 "use client";
 
 import "./globals.css";
@@ -12,23 +13,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true); // 認証状態の読み込み中を示す
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        router.push('/auth'); // 認証されていない場合は/authにリダイレクト
+        router.push('/auth');
       } else {
-        setLoading(false); // 認証済みの場合に読み込みを終了
+        setLoading(false);
       }
     });
 
-    return () => unsubscribe(); // クリーンアップ
+    return () => unsubscribe();
   }, [router]);
 
   if (loading) {
-    // 読み込み中のインジケーターなどを表示
-    return <div>Loading...</div>;
+    // return <div>Loading...</div>;
   }
 
   return (

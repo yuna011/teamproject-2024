@@ -20,7 +20,7 @@ export default function Regulations() {
                     <a href="#">詳細</a>
                 </div>
                 <div>
-                    
+
                 </div>
             </div>
         </div>
