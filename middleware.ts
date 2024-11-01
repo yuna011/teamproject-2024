@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
 
     // If there is no token and the user is not on the auth page, redirect to /auth
     if (!token && !request.nextUrl.pathname.startsWith('/auth')) {
-        return NextResponse.redirect(new URL('/auth', request.url));
+        // return NextResponse.redirect(new URL('/auth', request.url));
     }
 
     // If token is present or user is on /auth, continue to the next step
