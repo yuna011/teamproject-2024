@@ -6,6 +6,7 @@ import style from "../styles/notification.module.css";
 type notification = {
     notificationApp: string,  // 通知のアプリ名
     notificationText: string  // 通知のテキスト内容
+    pincode?: string; // 認証コードをオプショナルで追加
 }
 
 export function Notification(props: notification) {
@@ -17,13 +18,13 @@ export function Notification(props: notification) {
     useEffect(() => {
         // setTimeoutで3秒後に実行される関数をセット：この関数ではaddClass状態をtrueに設定。
         // これにより、3秒後に何らかのアニメーションが開始される（CSS側でaddClassがtrueになったときのアニメーションを設定する想定）
-        // const timer = setTimeout(() => {
-        //     setAddClass(true);
-        // }, 3000);
+        const timer = setTimeout(() => {
+            setAddClass(true);
+        }, 3000);
 
         // useEffectでreturnされる関数は、コンポーネントがアンマウントされたときに実行される（クリーンアップ関数と呼ばれる）
         // この例では、クリーンアップ関数でsetTimeoutのタイマーをクリアしています。これにより不要な動作を防ぐ
-        // return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
     }, []); // 依存配列が空なので、このuseEffectはコンポーネントがマウントされた後に一度だけ実行される
 
     // JSXを返す（UIの構造を定義）
@@ -43,7 +44,7 @@ export function Notification(props: notification) {
                 {/* 通知の本文 */}
                 <div className={style.notificationContents}>
                     {/* 通知のテキストを表示 */}
-                    <p className={style.notificationText}>{props.notificationText}</p>
+                    <p className={style.notificationText}>{props.notificationText}{props.pincode}</p>
                 </div>
             </div>
         </>
