@@ -1,86 +1,172 @@
-// クライアントサイドで実行されることを示すディレクティブ
 'use client';
 
-import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
+import { ref, set, get, update } from 'firebase/database';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { auth } from '../../../firebaseConfig';
+import { auth, database } from '../../../firebaseConfig';
 
-/**
- * AuthPage コンポーネント
- * ユーザーが新規登録またはログインを行うためのフォームを表示し、
- * 成功時には認証トークンをクッキーに保存し、/main へリダイレクトします。
- */
+interface UserData {
+    ageGroup: string;
+    gender: string;
+    instagramName: string;
+    phoneNumber: string;
+    profileImage: string;
+    userName: string;
+    [key: string]: string;
+}
+
 export default function AuthPage() {
-    // 各フォーム入力フィールドの状態を管理
-    const [email, setEmail] = useState(''); // メールアドレス入力
-    const [password, setPassword] = useState(''); // パスワード入力
-    const [isRegister, setIsRegister] = useState(true); // 新規登録モードかログインモードかを管理
-    const [error, setError] = useState<string | null>(null); // エラーメッセージ
-    const [success, setSuccess] = useState<string | null>(null); // 成功メッセージ
-    const router = useRouter(); // ページ遷移用のフック
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [isRegister, setIsRegister] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
+    const [inputValues, setInputValues] = useState<UserData>({
+        ageGroup: '',
+        gender: '',
+        instagramName: '',
+        phoneNumber: '',
+        profileImage: '',
+        userName: ''
+    });
 
-    /**
-     * フォーム送信時の処理
-     * 新規登録またはログインのいずれかの処理を実行し、成功時にクッキーを設定してリダイレクト
-     */
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); // デフォルトのフォーム送信動作を無効化
-        setError(null); // エラーメッセージをリセット
-        setSuccess(null); // 成功メッセージをリセット
+    useEffect(() => {
+        const fetchUserData = async (currentUser: User | null) => {
+            if (currentUser) {
+                setUser(currentUser);
+                try {
+                    const userSnapshot = await get(ref(database, `users/${currentUser.uid}`));
+                    if (userSnapshot.exists()) {
+                        const data = userSnapshot.val() as UserData;
+                        setUserData(data);
+                        setInputValues(data);
+                    } else {
+                        console.log('ユーザーデータが存在しません');
+                    }
+                } catch (error) {
+                    console.error('データの取得に失敗しました:', error);
+                }
+            } else {
+                setUser(null);
+                setUserData(null);
+            }
+        };
+
+        const unsubscribe = onAuthStateChanged(auth, fetchUserData);
+        return () => unsubscribe();
+    }, []);
+
+    const handleUpdateField = async (field: keyof UserData) => {
+        if (user) {
+            try {
+                const userRef = ref(database, `users/${user.uid}`);
+                await update(userRef, { [field]: inputValues[field] });
+                alert(`${field}が更新されました！`);
+                setUserData((prevData) => prevData ? { ...prevData, [field]: inputValues[field] } : prevData);
+            } catch (error) {
+                console.error(`Failed to update ${field}:`, error);
+                alert(`${field}の更新に失敗しました。`);
+            }
+        }
+    };
+
+    const handleInputChange = (field: keyof UserData, value: string) => {
+        setInputValues((prevValues) => ({
+            ...prevValues,
+            [field]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError(null);
+        setSuccess(null);
 
         try {
             let userCredential;
             if (isRegister) {
-                // 新規登録処理
                 userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                setSuccess('ユーザー登録が成功しました。'); // 成功メッセージを表示
+                const uid = userCredential.user.uid;
+                await set(ref(database, `users/${uid}`), { ...inputValues });
+                setSuccess('ユーザー登録が成功しました。');
             } else {
-                // ログイン処理
                 userCredential = await signInWithEmailAndPassword(auth, email, password);
-                setSuccess('ログインに成功しました。'); // 成功メッセージを表示
+                setSuccess('ログインに成功しました。');
             }
 
-            // 認証トークンを取得し、クッキーに保存
             const token = await userCredential.user.getIdToken();
-            Cookies.set('auth-token', token, { expires: 1, path: '/' }); // クッキーの有効期限を1日に設定
-
-            // 成功時に /main ページへリダイレクト
-            router.push('/main');
+            Cookies.set('auth-token', token, { expires: 1, path: '/' });
+            // router.push('/main'); // リダイレクト先が必要な場合有効化
         } catch (error) {
-            // エラー発生時、エラーメッセージを表示
             setError('操作に失敗しました。');
             console.error('Auth error:', error);
         }
     };
 
-    // コンポーネントの描画内容
     return (
         <div>
-            <h2>{isRegister ? 'ユーザー登録' : 'ログイン'}</h2> {/* モードに応じた見出し */}
+            <h2>{isRegister ? 'ユーザー登録' : 'ログイン'}</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     type='email'
                     placeholder='メールアドレス'
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)} // メールアドレス入力変更ハンドラ
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                 />
                 <input
                     type='password'
                     placeholder='パスワード'
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)} // パスワード入力変更ハンドラ
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type='submit'>{isRegister ? '登録' : 'ログイン'}</button> {/* 登録またはログインボタン */}
+                <button type='submit'>{isRegister ? '登録' : 'ログイン'}</button>
             </form>
-            <button onClick={() => setIsRegister(!isRegister)}> {/* モード切替ボタン */}
+            <button onClick={() => setIsRegister(!isRegister)}>
                 {isRegister ? '既にアカウントをお持ちですか？ログインはこちら' : 'アカウントをお持ちでないですか？新規登録はこちら'}
             </button>
-            {error && <p style={{ color: 'red' }}>{error}</p>} {/* エラーメッセージの表示 */}
-            {success && <p style={{ color: 'green' }}>{success}</p>} {/* 成功メッセージの表示 */}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+
+            <div style={{ border: '1px solid #000', padding: '16px', margin: '16px 0' }}>
+                <h2>テスト画面 - ログインユーザー情報とDB更新</h2>
+                {user ? (
+                    <>
+                        <p>ユーザーID: {user.uid}</p>
+                        <p>メールアドレス: {user.email}</p>
+                        <h3>データベースのユーザーデータ:</h3>
+                        {userData ? (
+                            <pre>{JSON.stringify(userData, null, 2)}</pre>
+                        ) : (
+                            <p>データを取得中...</p>
+                        )}
+
+                        <h3>DBの各フィールドを更新</h3>
+                        {Object.keys(inputValues).map((field) => (
+                            <div key={field} style={{ marginBottom: '8px' }}>
+                                <label>
+                                    {field}:
+                                    <input
+                                        type="text"
+                                        placeholder={`${field}を入力`}
+                                        value={inputValues[field as keyof UserData]}
+                                        onChange={(e) => handleInputChange(field as keyof UserData, e.target.value)}
+                                    />
+                                </label>
+                                <button onClick={() => handleUpdateField(field as keyof UserData)}>更新</button>
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <p>ユーザーがログインしていません。</p>
+                )}
+            </div>
         </div>
     );
 }
