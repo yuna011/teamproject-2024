@@ -61,20 +61,20 @@ export default function AuthPage() {
             <h2>{isRegister ? 'ユーザー登録' : 'ログイン'}</h2> {/* モードに応じた見出し */}
             <form onSubmit={handleSubmit}>
                 <input
-                    type="email"
-                    placeholder="メールアドレス"
+                    type='email'
+                    placeholder='メールアドレス'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)} // メールアドレス入力変更ハンドラ
                     required
                 />
                 <input
-                    type="password"
-                    placeholder="パスワード"
+                    type='password'
+                    placeholder='パスワード'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)} // パスワード入力変更ハンドラ
                     required
                 />
-                <button type="submit">{isRegister ? '登録' : 'ログイン'}</button> {/* 登録またはログインボタン */}
+                <button type='submit'>{isRegister ? '登録' : 'ログイン'}</button> {/* 登録またはログインボタン */}
             </form>
             <button onClick={() => setIsRegister(!isRegister)}> {/* モード切替ボタン */}
                 {isRegister ? '既にアカウントをお持ちですか？ログインはこちら' : 'アカウントをお持ちでないですか？新規登録はこちら'}

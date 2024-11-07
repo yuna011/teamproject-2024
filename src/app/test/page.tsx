@@ -16,7 +16,7 @@ function Test01() {
     // 宣言した型を使用して、安全性を高める。
     // このstateはユーザーが操作できるinputの情報を保持するためのstate。
     const [userInfo, setUserInfo] = useState<userInformationType>({
-        mail: '', // string(文字列)での初期値は '' or "" 。undefinedやnullはstringではないから。
+        mail: '', // string(文字列)での初期値は '' or '' 。undefinedやnullはstringではないから。
         pass: ''
     })
 
@@ -55,14 +55,14 @@ function Test01() {
                 </ul>
             </div>
 
-            <input type="text" id={'mail'} value={userInfo.mail} onChange={(e) => {
+            <input type='text' id={'mail'} value={userInfo.mail} onChange={(e) => {
                 handleInput(e.target.value, 'mail')
-            }} placeholder="メールアドレス" />
+            }} placeholder='メールアドレス' />
 
-            {/* 本当はパスワード欄なら type="pass"であるべきだが、今回は値の確認したいのでこのままで良い。 */}
-            <input type="text" id={'pass'} value={userInfo.pass} onChange={(e) => {
+            {/* 本当はパスワード欄なら type='pass'であるべきだが、今回は値の確認したいのでこのままで良い。 */}
+            <input type='text' id={'pass'} value={userInfo.pass} onChange={(e) => {
                 handleInput(e.target.value, 'pass')
-            }} placeholder="パスワード" />
+            }} placeholder='パスワード' />
 
             <button onClick={() => {
                 setView({
@@ -102,12 +102,12 @@ function Test02() {
                 </ul>
             </div>
 
-            <input type="text" id={'mail'} value={todo.text} onChange={(e) => {
+            <input type='text' id={'mail'} value={todo.text} onChange={(e) => {
                 setTodo({
                     ...todo,
                     text: e.target.value
                 })
-            }} placeholder="todoを入力" />
+            }} placeholder='todoを入力' />
             <button
                 disabled={todo.text === ''}
                 onClick={() => {

@@ -1,7 +1,7 @@
 // src/app/layout.tsx
-"use client";
+'use client';
 
-import "./globals.css";
+import './globals.css';
 
 export default function RootLayout({
   children,
@@ -10,7 +10,7 @@ export default function RootLayout({
 }) {
 
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
         <main>{children}</main>
       </body>

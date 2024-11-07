@@ -79,36 +79,36 @@ const UserProfileForm: React.FC = () => {
     return (
         <form onSubmit={handleSubmit}>
             <input
-                type="text"
-                name="username"
-                placeholder="ユーザー名"
+                type='text'
+                name='username'
+                placeholder='ユーザー名'
                 value={profile.username}
                 onChange={handleChange}
                 required
             />
-            <select name="gender" value={profile.gender} onChange={handleChange} required>
-                <option value="">性別を選択</option>
-                <option value="male">男性</option>
-                <option value="female">女性</option>
+            <select name='gender' value={profile.gender} onChange={handleChange} required>
+                <option value=''>性別を選択</option>
+                <option value='male'>男性</option>
+                <option value='female'>女性</option>
             </select>
             <input
-                type="tel"
-                name="phoneNumber"
-                placeholder="電話番号"
+                type='tel'
+                name='phoneNumber'
+                placeholder='電話番号'
                 value={profile.phoneNumber}
                 onChange={handleChange}
                 required
             />
-            <select name="ageGroup" value={profile.ageGroup} onChange={handleChange} required>
-                <option value="">年代を選択</option>
-                <option value="10s">10代</option>
-                <option value="20s">20代</option>
-                <option value="30s">30代</option>
-                <option value="40s">40代</option>
-                <option value="50s">50代以上</option>
+            <select name='ageGroup' value={profile.ageGroup} onChange={handleChange} required>
+                <option value=''>年代を選択</option>
+                <option value='10s'>10代</option>
+                <option value='20s'>20代</option>
+                <option value='30s'>30代</option>
+                <option value='40s'>40代</option>
+                <option value='50s'>50代以上</option>
             </select>
-            <input type="file" name="profileImage" onChange={handleFileChange} />
-            <button type="submit">プロフィールを更新</button>
+            <input type='file' name='profileImage' onChange={handleFileChange} />
+            <button type='submit'>プロフィールを更新</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
         </form>

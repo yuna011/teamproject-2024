@@ -12,7 +12,7 @@ export function countReducer(state: number, action: Action): number {
             return state + 1
         case 'MINUS':
             return state - 1
-        case "RESET":
+        case 'RESET':
             return 0
         default: return state
     }

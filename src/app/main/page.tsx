@@ -1,5 +1,5 @@
 // src/app/page.tsx
-"use client";
+'use client';
 import { useEffect, useState } from 'react';
 
 // 緯度と経度を格納する Location 型
@@ -17,7 +17,7 @@ interface ApiResponse {
 
 export default function Home() {
     const [location, setLocation] = useState<Location | null>(null);
-    const [address, setAddress] = useState<string>("地名を取得中です...");
+    const [address, setAddress] = useState<string>('地名を取得中です...');
 
     useEffect(() => {
         const fetchLocation = () => {
@@ -28,7 +28,7 @@ export default function Home() {
 
                     try {
                         const response = await fetch(`/api/location/getPlace?lat=${latitude}&lng=${longitude}`, {
-                            cache: "no-store",
+                            cache: 'no-store',
                         });
                         const data: ApiResponse = await response.json();
 
@@ -36,16 +36,16 @@ export default function Home() {
                             setAddress(data.address); // 詳細な住所を表示
                         } else if (data.error) {
                             console.error(data.error);
-                            setAddress("地名情報が見つかりませんでした。");
+                            setAddress('地名情報が見つかりませんでした。');
                         }
                     } catch (e) {
-                        console.error("Error fetching address:", e);
-                        setAddress("地名情報の取得に失敗しました");
+                        console.error('Error fetching address:', e);
+                        setAddress('地名情報の取得に失敗しました');
                     }
                 });
             } else {
-                console.error("Geolocation is not supported by this browser.");
-                setAddress("位置情報がサポートされていません");
+                console.error('Geolocation is not supported by this browser.');
+                setAddress('位置情報がサポートされていません');
             }
         };
 
