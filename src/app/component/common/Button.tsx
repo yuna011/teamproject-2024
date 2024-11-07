@@ -28,7 +28,7 @@ export default function Button(props: Props) {
     const baseClass = 'py-2 px-8 rounded-full';
     const activeClass = 'bg-[#3570C6] text-white';
     const fullWidthClass = wFull ? 'mx-auto w-full' : '';
-    const disabledClass = disabled ? 'cursor-not-allowed opacity-50' : '';
+    const disabledClass = disabled ? 'cursor-not-allowed opacity-50 bg-[#3570C6] text-white' : '';
 
     // 組み合わせたクラス名
     const classNames = `

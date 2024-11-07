@@ -1,0 +1,94 @@
+.notification {
+    width: 90%;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: saturate(180%) blur(20px);
+    height: 4rem;
+    position: absolute;
+    max-width: 350px;
+    top: -5rem;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 22px;
+    padding: 0.4rem;
+    animation: 0.5s notification forwards;
+}
+
+.notification::after {
+    content: '';
+    display: block;
+    width: 2.2rem;
+    height: 2.2rem;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: .6rem;
+    position: absolute;
+    background: url('/images/sms.png') no-repeat;
+    background-size: 100%;
+}
+
+@keyframes notification {
+    0% {
+        top: -5rem;
+    }
+
+    100% {
+        top: 1rem;
+    }
+}
+
+.animation {
+    position: absolute;
+    top: 1rem;
+    animation: 0.5s closeNotification forwards
+}
+
+@keyframes closeNotification {
+    0% {
+        top: 1rem;
+    }
+
+    100% {
+        top: -5rem;
+    }
+}
+
+.notificationHeader {
+    display: flex;
+    padding-top: 0.2rem;
+    font-size: 0.8rem;
+    width: 100%;
+    height: 1rem;
+    justify-content: space-between;
+    color: #38414a;
+}
+
+.notificationHeader h3 {
+    font-weight: normal;
+    font-size: 0.8rem;
+    padding-left: 3rem;
+    position: relative;
+}
+
+.notificationHeader h3::before {
+    content: '';
+    background: url('/src/public/images/message.png') no-repeat;
+    background-size: 100% 100%;
+    background-position: center center;
+    display: block;
+    position: absolute;
+}
+
+.notificationHeader .notificationTime {
+    padding-right: 0.6rem;
+}
+
+.notificationContents {
+    width: 100%;
+    padding: 0.4rem 3rem 0;
+    font-size: 0.8rem;
+    font-weight: bold;
+}

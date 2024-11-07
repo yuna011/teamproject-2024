@@ -1,15 +1,16 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { get, ref } from 'firebase/database';
 import { auth, database } from '../../../firebaseConfig'; // Firebase configをインポート
 import { onAuthStateChanged } from 'firebase/auth';
 import Button from '@/app/component/common/Button';
+import Input from '../component/common/Input';
+import { Notification } from '../component/Notification';
 import Chevron from '@/app/component/common/Chevron';
 import Checkbox from '@/app/component/common/Checkbox';
 import { FaLocationArrow } from 'react-icons/fa';
 import { FaBell } from 'react-icons/fa';
 import { FaBluetooth } from 'react-icons/fa';
-import Input from '../component/common/Input';
 
 // 型定義
 interface UserData {
@@ -18,7 +19,7 @@ interface UserData {
 }
 
 export default function CreateAccount() {
-    const [index, setIndex] = useState<number>(1);
+    const [index, setIndex] = useState<number>(0);
     const [instagramName, setInstagramName] = useState<string | null>(null);
 
     useEffect(() => {
@@ -61,7 +62,7 @@ export default function CreateAccount() {
 
     return (
         <div>
-            <div className='absolute bg-white top-0'>
+            {/* <div className='absolute bg-white top-0'>
                 <h2 className="text-center font-bold text-lg">
                     現在のインデックス: {index}
                 </h2>
@@ -76,7 +77,12 @@ export default function CreateAccount() {
                         </button>
                     ))}
                 </div>
-            </div>
+            </div> */}
+            {index !== 0 && <Notification notificationApp={'メッセージ'}
+                // サーバーから送られてきた認証コードを表示している。
+                // notificationText={`認証コード : ${pincode.pincode}`}
+                notificationText={`認証コード : 2323`}
+            />}
             {index === 0 && (
                 <h1 className='mt-20 ml-6 leading-10 text-3xl font-bold'>
                     ようこそ、<br />@{instagramName || 'ゲスト'}
@@ -97,9 +103,15 @@ export function PhoneInput() {
     const [phoneNumber, setPhoneNumber] = useState('');
 
     const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // 数字のみを入力させる
-        const sanitizedValue = e.target.value.replace(/[^\d]/g, '');
-        setPhoneNumber(sanitizedValue);
+        // 正規表現で半角数字以外を除去
+        const sanitizedValue = e.target.value.replace(/[^\d]/g, "");
+
+        // 11桁の電話番号を "090 0000 0000" 形式に整形
+        const format = (str: string) =>
+            [str.slice(0, 3), str.slice(3, 7), str.slice(7, 11)].filter(Boolean).join(" ");
+
+        // 11桁を超えないよう制限して、整形した値をセット
+        setPhoneNumber(format(sanitizedValue.slice(0, 11)));
     };
 
     return (
@@ -111,15 +123,16 @@ export function PhoneInput() {
                 value={phoneNumber}
                 onChange={setPhoneNumber} // 直接更新も可
                 onInputChange={handlePhoneInputChange} // カスタムロジックを適用
-                placeholder="080-1234-1234"
+                placeholder="080 1234 1234"
                 className=' m-auto mt-14 mb-6'
             />
-            <p>
-                {/* <button className='w-[294px] h-[39px] text-white rounded-xl bg-[#3570c6]'>認証コードを受け取る</button> */}
-                <Button disabled={false} className='font-bold text-lg' wFull text={'認証コードを受け取る'} onClick={() => {
-                    console.log('void');
-                }} />
-            </p>
+            <Button
+                disabled={phoneNumber.replace(/\s/g, '').length !== 11} // 11桁未満なら無効
+                className='font-bold text-lg'
+                wFull
+                text={'認証コードを受け取る'}
+                onClick={() => console.log('void')}
+            />
         </div>
     )
 }
