@@ -4,6 +4,7 @@ type Props = {
     onClick?: () => void; // 任意: クリック時の動作
     wFull?: boolean; // 任意: trueの場合横幅を最大に。
     className?: string; // 任意: 任意のクラス名を付与
+    inversion?: boolean // 任意: カラーを反転させる時true
 };
 
 export default function Button(props: Props) {
@@ -12,11 +13,11 @@ export default function Button(props: Props) {
         onClick = () => { },
         wFull = false,
         text,
-        className = ''
+        className = '',
+        inversion = false,
     } = props;
 
     function handleClick() {
-        // disabledなら「無効状態です」とログに表示、disabledでなければ、任意のonClick動作を発火。
         if (disabled) {
             console.log('無効状態です');
         } else {
@@ -24,16 +25,18 @@ export default function Button(props: Props) {
         }
     };
 
-    // 通常のボタンクラスとdisabledクラスを定義
+    // ボタンの基本クラス
     const baseClass = 'py-2 px-8 rounded-full';
-    const activeClass = 'bg-[#3570C6] text-white';
     const fullWidthClass = wFull ? 'mx-auto w-full' : '';
-    const disabledClass = disabled ? 'cursor-not-allowed opacity-50 bg-[#3570C6] text-white' : '';
+
+    // 通常時と反転時のスタイルクラス
+    const activeClass = inversion ? 'bg-white text-[#3570C6]' : 'bg-[#3570C6] text-white';
+    const disabledClass = 'cursor-not-allowed opacity-50';
 
     // 組み合わせたクラス名
     const classNames = `
         ${baseClass} 
-        ${disabled ? disabledClass : activeClass} 
+        ${disabled ? `${disabledClass} ${activeClass}` : activeClass} 
         ${fullWidthClass} 
         ${className}
     `.trim();

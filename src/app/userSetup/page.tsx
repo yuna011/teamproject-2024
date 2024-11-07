@@ -12,6 +12,7 @@ import { FaLocationArrow } from 'react-icons/fa';
 import { FaBell } from 'react-icons/fa';
 import { FaBluetooth } from 'react-icons/fa';
 import Checkbox from '../styles/checkbox.module.css';
+import { Dropdown } from 'primereact/dropdown';
 
 
 type UserData = {
@@ -189,7 +190,9 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
 
     return (
         <div className='mt-48 text-center px-12'>
-            <h2 className='text-2xl font-bold'>電話番号を<br />入力してください</h2>
+            <h2 className='text-2xl mb-8'>電話番号を入力</h2>
+            <p>日本国内でSMS受信可能な<br />
+                電話番号を入力してください。</p>
             <Input
                 type="tel"
                 value={phoneNumber}
@@ -258,7 +261,7 @@ export function VerificationCodeInput({
 
     return (
         <div className="mt-48 text-center px-12">
-            <h2 className="text-2xl font-bold">認証コードを入力</h2>
+            <h2 className="text-2xl">認証コードを入力</h2>
             <p className="my-6 text-gray-600">
                 {phoneNumber}にSMSで送信された<br />
                 4桁の認証コードを入力してください。
@@ -353,7 +356,7 @@ export function TermsAgreement(props: TermsAgreementProps) {
 
     return (
         <div className="flex flex-col gap-6 justify-center h-screen mx-10 mt-16">
-            <h1 className="mx-auto text-3xl mb-4">利用するために</h1>
+            <h1 className="mx-auto text-2xl mb-4">利用するために</h1>
             <AgreementItem
                 text="エンドユーザーライセンス契約"
                 description="これには、アプリの安全性、セキュリティ機能を保証するために、「アプリ名」が「アプリ名」本体含む各機能のソフトウェアを自動的に随時更新することに同意することも含まれます。"
@@ -396,50 +399,67 @@ export function TermsAgreement(props: TermsAgreementProps) {
 
 export function PersonalInfoStep() {
     return (
+        // TODO overflowいるかな？
         <div className='font-bold overflow-hidden'>
             <div className='ml-10 mt-44'>
                 <p className='w-fit px-4 py-1 rounded-2xl text-white bg-[#3570C6]'>STEP1</p>
-                <p className='mt-10 text-3xl'>あなたのことを<br />教えてください</p>
+                <p className='mt-10 text-3xl leading-[1.4]'>あなたのことを<br />教えてください</p>
             </div>
-            <div className='fixed bottom-[-12rem] w-full aspect-square flex items-end justify-center rounded-full scale-150 bg-[#3570c6]'>
+            <div className='absolute bottom-0 w-full h-[400px] flex items-end justify-center rounded-t-[999px] scale-150 bg-[#3570c6]'>
             </div>
-            <Button text={'次へ'} onClick={() => { }} />
+            <Button disabled={false} text={'次へ'} inversion onClick={() => { }} />
         </div>
     )
 }
 
 export function GenderAndAgeSelection() {
+    const [selectedGender, setSelectedGender] = useState<string | null>(null);
+    const [selectedAgeGroup, setSelectedAgeGroup] = useState<string | null>(null);
+
+    const handleGenderSelect = (gender: string) => {
+        setSelectedGender(gender);
+    };
+
+    const ageOptions = [
+        { label: '10代', value: '10代' },
+        { label: '20代', value: '20代' },
+        { label: '30代', value: '30代' },
+        { label: '40代', value: '40代' },
+        { label: '50代', value: '50代' },
+        { label: '60代以上', value: '60代以上' },
+    ];
+
     return (
-        <>
-            <div className='font-bold'>
-                <p className='mt-44 text-center text-3xl'>あなたの性別を<br />教えてください</p>
-                <div className='flex justify-center gap-4 mt-8'>
-                    <p className='flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center text-white bg-[#3570c6]'>男性</p>
-                    <p className='flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center bg-gray-200'>女性</p>
-                </div>
-                <Chevron prevLink='/accountSetting' nextLink='/accountSetting/age' />
+        <div className='font-bold'>
+            <p className='mt-44 text-center text-2xl'>あなたの性別と年代は?</p>
+            <div className='flex justify-center gap-4 mt-8'>
+                <p
+                    className={`flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center cursor-pointer transition-all duration-300 ease-in-out transform ${selectedGender === '男性' ? 'text-white bg-[#3570c6]' : 'bg-gray-200'}`}
+                    onClick={() => handleGenderSelect('男性')}
+                >
+                    男性
+                </p>
+                <p
+                    className={`flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center cursor-pointer transition-all duration-300 ease-in-out transform ${selectedGender === '女性' ? 'text-white bg-[#3570c6]' : 'bg-gray-200'}`}
+                    onClick={() => handleGenderSelect('女性')}
+                >
+                    女性
+                </p>
             </div>
-            <div className='font-bold'>
-                <div className='flex justify-center gap-4 mt-24'>
-                    <p className='flex justify-center items-end w-32 h-32 pb-4 rounded-full text-center text-white bg-[#3570c6]'>男性</p>
-                    <p className='flex justify-center items-end w-32 h-32 pb-4 rounded-full text-center bg-gray-200'>女性</p>
-                </div>
-                <p className='mt-16 text-center text-3xl'>あなたの年代を<br />教えてください</p>
-                <div className='mt-12 text-center'>
-                    <select className='border-b-2 border-gray-400 text-center font-normal'>
-                        <option>10代</option>
-                        <option>20代</option>
-                        <option>30代</option>
-                        <option>40代</option>
-                        <option>50代</option>
-                        <option>60代以上</option>
-                    </select>
-                </div>
-                <Chevron prevLink='/accountSetting/gender' nextLink='/accountSetting/name' />
+            {/* TODO いい感じのコンポーネントですね。prevとnextの動作をより厳密にする */}
+            <Chevron prevLink='/accountSetting' nextLink='/accountSetting/age' />
+
+            <div className='mt-12 text-center'>
+                <Dropdown
+                    value={selectedAgeGroup}
+                    options={ageOptions}
+                    onChange={(e) => setSelectedAgeGroup(e.value)}
+                    placeholder="年齢層を選択"
+                // className="w-full max-w-xs mx-auto border-b-2 border-gray-400"
+                />
             </div>
-            )
-        </>
-    )
+        </div>
+    );
 }
 
 export function UsernameSetup() {

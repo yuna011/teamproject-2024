@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* import 'primereact/resources/themes/saga-blue/theme.css'; // テーマ */
+/* import 'primereact/resources/primereact.min.css'; // プライマリCSS */
+/* import 'primeicons/primeicons.css'; // アイコン */
 
 :root {}
 

@@ -1,4 +1,5 @@
 import style from '../../styles/component/common/Input.module.css'
+import { useState } from 'react'
 
 type InputProps = {
     value: string;
@@ -17,12 +18,16 @@ export default function Input({
     className = '',
     onInputChange,
 }: InputProps) {
+    const [isValid, setIsValid] = useState(false);
+
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const newValue = e.target.value;
         if (onInputChange) {
             onInputChange(e);
         } else {
             onChange(e.target.value);
         }
+        setIsValid(newValue.replace(/\s/g, '').length === 11);
     };
 
     return (
@@ -34,7 +39,7 @@ export default function Input({
                 placeholder={placeholder}
                 className={`block w-full pb-1 text-2xl text-center text-gray-700 border-b-2 border-gray-300 outline-none ${style.input}`}
             />
-            <span className={`${style.under}`}></span>
+            <span className={`${style.under} ${isValid ? style.active : ''}`}></span>
         </div>
     );
 }
