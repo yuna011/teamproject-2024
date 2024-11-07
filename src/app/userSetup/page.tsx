@@ -66,30 +66,27 @@ export default function CreateAccount() {
         return () => unsubscribe();
     }, []);
 
-    const handleCodeGenerated = (code: string) => {
+    // ページネーションを司る関数。
+    function nextPage(nextIndex?: number) {
+        if (nextIndex !== undefined) {
+            setIndex(nextIndex);
+        } else {
+            setIndex((prevIndex) => prevIndex + 1);
+        }
+    };
+
+    function handleCodeGenerated(code: string) {
         setPincode(code);
         setIndex(2);
         setNotificationVisible(true); // 新しいコード生成で通知を表示
     };
 
-    const handlePhoneNumberSubmit = (number: string) => {
+    function handlePhoneNumberSubmit(number: string) {
         setPhoneNumber(number);
     };
 
-    const handleVerificationSuccess = () => {
-        setIndex(3); // 認証成功時に次の画面に進む
-    };
-
-    const handleCodeRegenerated = (newCode: string) => {
-        setPincode(newCode);
-        setNotificationVisible(true); // 新しいコード生成で通知を再表示
-    };
-
-    const handleTermsAgreement = () => {
-        setIndex(4)
-    }
-
-    const handleIndexChange = (newIndex: number) => {
+    // デバッグ用
+    function handleIndexChange(newIndex: number) {
         setIndex(newIndex);
     };
 
@@ -147,11 +144,11 @@ export default function CreateAccount() {
                 <VerificationCodeInput
                     phoneNumber={phoneNumber}
                     pincode={pincode}
-                    onVerificationSuccess={handleVerificationSuccess}
-                    onCodeRegenerated={handleCodeRegenerated}
+                    onCodeRegenerated={handleCodeGenerated}
+                    onVerificationSuccess={nextPage}
                 />
             )}
-            {index === 3 && <TermsAgreement onTermsAgreement={handleTermsAgreement} />}
+            {index === 3 && <TermsAgreement onTermsAgreement={nextPage} />}
             {index === 4 && <PersonalInfoStep />}
             {index === 5 && <GenderAndAgeSelection />}
             {index === 6 && <UsernameSetup />}
@@ -164,7 +161,7 @@ export default function CreateAccount() {
 export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputProps) {
     const [phoneNumber, setPhoneNumber] = useState('');
 
-    const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    function handlePhoneInputChange(e: React.ChangeEvent<HTMLInputElement>) {
         const sanitizedValue = e.target.value.replace(/[^\d]/g, "");
         const format = (str: string) =>
             [str.slice(0, 3), str.slice(3, 7), str.slice(7, 11)].filter(Boolean).join(" ");
@@ -224,7 +221,12 @@ export function VerificationCodeInput({
     const ref4 = useRef<HTMLInputElement>(null);
 
     const refs: RefObject<HTMLInputElement>[] = [ref1, ref2, ref3, ref4];
-    const [code, setCode] = useState(["", "", "", ""]);
+    const [code, setCode] = useState<string[]>(["", "", "", ""]);
+    const [isError, setIsError] = useState<boolean>(false);
+
+    useEffect(() => {
+        ref1.current?.focus();
+    }, []);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
         const value = e.target.value.replace(/[^\d]/g, "");
@@ -242,9 +244,13 @@ export function VerificationCodeInput({
             if (newCode.join("") === pincode) {
                 setTimeout(() => {
                     onVerificationSuccess();
+                    setIsError(false); // 新しいコードが生成されたらエラーメッセージをリセット
                 }, 2000); // 2秒待機
             } else {
-                console.error('認証コードが違います');
+                setTimeout(() => {
+                    setIsError(true);
+                    console.error('認証コードが違います');
+                }, 2000); // 2秒待機
             }
         }
     };
@@ -254,7 +260,9 @@ export function VerificationCodeInput({
             const response = await axios.post('/api/pincode/generatePincode');
             const { randomCode } = response.data;
             onCodeRegenerated(randomCode);
+            setIsError(false);
         } catch (error) {
+            setIsError(true);
             console.error('認証コードの再生成に失敗しました:', error);
         }
     };
@@ -266,6 +274,7 @@ export function VerificationCodeInput({
                 {phoneNumber}にSMSで送信された<br />
                 4桁の認証コードを入力してください。
             </p>
+            {isError && <p className='text-red-600 font-bold'>認証コードが違います</p>}
             <div className="flex justify-center mt-4 space-x-2">
                 {refs.map((ref, index) => (
                     <input
@@ -301,17 +310,12 @@ type AgreementItemProps = {
 };
 
 function AgreementItem({ text, description, optional, isChecked, onCheckChange }: AgreementItemProps) {
-    const handleCheckboxClick = () => {
-        onCheckChange(!isChecked);
-    };
-
     return (
         <div className="flex">
-            {/* カスタムチェックボックス */}
-            <div className='h-full'>
+            <div className="h-full">
                 <div
-                    className={`w-[18px] h-[18px] duration-75 mt-[3px] relative rounded-full cursor-pointer ${isChecked ? 'bg-[#3570C6] ' : 'border-[1.5px]'}`}
-                    onClick={handleCheckboxClick}
+                    className={`w-[18px] h-[18px] duration-75 mt-[3px] relative rounded-full cursor-pointer ${isChecked ? 'bg-[#3570C6]' : 'border-[1.5px]'}`}
+                    onClick={() => onCheckChange(!isChecked)}
                 >
                     {isChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${Checkbox.mark}`}></div>}
                 </div>
@@ -328,9 +332,7 @@ function AgreementItem({ text, description, optional, isChecked, onCheckChange }
     );
 }
 
-
 export function TermsAgreement(props: TermsAgreementProps) {
-    const [allChecked, setAllChecked] = useState(false);
     const [checkedItems, setCheckedItems] = useState({
         license: false,
         terms: false,
@@ -338,61 +340,60 @@ export function TermsAgreement(props: TermsAgreementProps) {
         diagnostics: false,
     });
 
-    const handleAllCheckChange = () => {
+    const items = [
+        { key: 'license', text: 'エンドユーザーライセンス契約', description: 'アプリの安全性、セキュリティ機能を保証するために自動更新に同意' },
+        { key: 'terms', text: '利用規約', description: 'アプリの安全性、セキュリティ機能を保証するために自動更新に同意' },
+        { key: 'privacy', text: 'プライバシーポリシー' },
+        { key: 'diagnostics', text: '診断データの送信', optional: true },
+    ];
+
+    const allChecked = Object.values(checkedItems).slice(0, 4).every(Boolean);
+
+    const handleIndividualCheckChange = (key: string, checked: boolean) => {
+        setCheckedItems((prev) => ({ ...prev, [key]: checked }));
+    };
+
+    const toggleAllChecks = () => {
         const newCheckState = !allChecked;
-        setAllChecked(newCheckState);
-        setCheckedItems({
+        setCheckedItems(() => ({
             license: newCheckState,
             terms: newCheckState,
             privacy: newCheckState,
             diagnostics: newCheckState,
-        });
-    };
-
-    const handleIndividualCheckChange = (key: keyof typeof checkedItems, checked: boolean) => {
-        setCheckedItems((prev) => ({ ...prev, [key]: checked }));
-        setAllChecked(Object.values({ ...checkedItems, [key]: checked }).every(Boolean));
+        }));
     };
 
     return (
         <div className="flex flex-col gap-6 justify-center h-screen mx-10 mt-16">
             <h1 className="mx-auto text-2xl mb-4">利用するために</h1>
-            <AgreementItem
-                text="エンドユーザーライセンス契約"
-                description="これには、アプリの安全性、セキュリティ機能を保証するために、「アプリ名」が「アプリ名」本体含む各機能のソフトウェアを自動的に随時更新することに同意することも含まれます。"
-                isChecked={checkedItems.license}
-                onCheckChange={(checked) => handleIndividualCheckChange('license', checked)}
-            />
-            <AgreementItem
-                text="利用規約"
-                description="これには、アプリの安全性、セキュリティ機能を保証するために、「アプリ名」が「アプリ名」本体含む各機能のソフトウェアを自動的に随時更新することに同意することも含まれます。"
-                isChecked={checkedItems.terms}
-                onCheckChange={(checked) => handleIndividualCheckChange('terms', checked)}
-            />
-            <AgreementItem
-                text="プライバシーポリシー"
-                isChecked={checkedItems.privacy}
-                onCheckChange={(checked) => handleIndividualCheckChange('privacy', checked)}
-            />
-            <AgreementItem
-                text="診断データの送信"
-                optional
-                isChecked={checkedItems.diagnostics}
-                onCheckChange={(checked) => handleIndividualCheckChange('diagnostics', checked)}
-            />
+            {items.map(({ key, text, description, optional }) => (
+                <AgreementItem
+                    key={key}
+                    text={text}
+                    description={description}
+                    optional={optional}
+                    isChecked={checkedItems[key as keyof typeof checkedItems]}
+                    onCheckChange={(checked) => handleIndividualCheckChange(key, checked)}
+                />
+            ))}
             <div className="mx-auto border-dashed border-t-2 w-full my-6"></div>
             <div className="flex items-center">
                 <div
                     className={`w-[18px] h-[18px] duration-75 relative rounded-full cursor-pointer ${allChecked ? 'bg-[#3570C6]' : 'border-[1.5px]'}`}
-                    onClick={handleAllCheckChange}
+                    onClick={toggleAllChecks}
                 >
                     {allChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${Checkbox.mark}`}></div>}
                 </div>
-                <label htmlFor="" className="ml-2 cursor-pointer">
+                <label className="ml-2 cursor-pointer">
                     全てに同意<span className="text-sm text-gray-500 ml-1">(任意)</span>
                 </label>
             </div>
-            <Button disabled={!(checkedItems.license && checkedItems.terms && checkedItems.privacy)} className='w-fit mt-12 py-2 px-4 self-end' text="同意する" onClick={() => { props.onTermsAgreement() }} />
+            <Button
+                disabled={!allChecked}
+                className="w-fit mt-12 py-2 px-4 self-end"
+                text="同意する"
+                onClick={props.onTermsAgreement}
+            />
         </div>
     );
 }

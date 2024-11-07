@@ -2,8 +2,8 @@
 'use client';
 
 import './globals.css';
-import 'primereact/resources/themes/saga-blue/theme.css'; // テーマ
-import 'primereact/resources/primereact.min.css'; // プライマリCSS
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
 
 export default function RootLayout({
   children,
