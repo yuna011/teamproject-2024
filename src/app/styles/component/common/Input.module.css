@@ -1,0 +1,17 @@
+.input+span {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    /* 下線を隠す */
+    height: 2px;
+    background-color: #3570C6;
+    transition: .3s;
+    transform: translateX(-50%);
+}
+
+/* フォーカス時 */
+.input:focus+span {
+    width: 100%;
+    /* 下線を表示 */
+}

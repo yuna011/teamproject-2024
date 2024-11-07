@@ -1,34 +1,122 @@
 'use client'
-import Button from '@/app/component/common/Button'
-import Chevron from '@/app/component/common/Chevron'
-import Checkbox from '@/app/component/common/Checkbox'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import { get, ref } from 'firebase/database';
+import { auth, database } from '../../../firebaseConfig'; // Firebase configをインポート
+import { onAuthStateChanged } from 'firebase/auth';
+import Button from '@/app/component/common/Button';
+import Chevron from '@/app/component/common/Chevron';
+import Checkbox from '@/app/component/common/Checkbox';
+import { FaLocationArrow } from 'react-icons/fa';
+import { FaBell } from 'react-icons/fa';
+import { FaBluetooth } from 'react-icons/fa';
+import Input from '../component/common/Input';
 
+// 型定義
+interface UserData {
+    instagramName: string;
+    [key: string]: any;
+}
 
 export default function CreateAccount() {
-    const [index, setIndex] = useState<number>(0)
+    const [index, setIndex] = useState<number>(1);
+    const [instagramName, setInstagramName] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchInstagramName = async (uid: string) => {
+            const userRef = ref(database, `users/${uid}`);
+            const snapshot = await get(userRef);
+            if (snapshot.exists()) {
+                const userData = snapshot.val() as UserData;
+                setInstagramName(userData.instagramName);
+            } else {
+                console.log('ユーザーデータが見つかりません');
+            }
+        };
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                fetchInstagramName(user.uid);
+            } else {
+                setInstagramName(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    // 3秒後にindexを更新するuseEffect
+    // useEffect(() => {
+    //     if (index === 0) {
+    //         const timer = setTimeout(() => {
+    //             setIndex((prevIndex) => prevIndex + 1);
+    //         }, 3000);
+
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [index]);
+
+    const handleIndexChange = (newIndex: number) => {
+        setIndex(newIndex);
+    };
 
     return (
         <div>
-            <h1 className='mt-20 ml-6 leading-10 text-3xl font-bold'>ようこそ、<br />@ryota11_07</h1>
+            <div className='absolute bg-white top-0'>
+                <h2 className="text-center font-bold text-lg">
+                    現在のインデックス: {index}
+                </h2>
+                <div className="flex justify-center gap-2 my-4">
+                    {[...Array(8)].map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => handleIndexChange(i)}
+                            className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            {i}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            {index === 0 && (
+                <h1 className='mt-20 ml-6 leading-10 text-3xl font-bold'>
+                    ようこそ、<br />@{instagramName || 'ゲスト'}
+                </h1>
+            )}
+            {index === 1 && <PhoneInput />}
+            {index === 2 && <TermsAgreement />}
+            {index === 3 && <PersonalInfoStep />}
+            {index === 4 && <GenderAndAgeSelection />}
+            {index === 5 && <UsernameSetup />}
+            {index === 6 && <PermissionsRequest />}
+            {index === 7 && <CompletionScreen />}
         </div>
-    )
+    );
 }
 
-export function CreateAccountTel() {
-    const [number, setNumber] = useState<string>('森尾')
+export function PhoneInput() {
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+    const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // 数字のみを入力させる
+        const sanitizedValue = e.target.value.replace(/[^\d]/g, '');
+        setPhoneNumber(sanitizedValue);
+    };
 
     return (
-        <div className='mt-20 text-xl text-center font-bold'>
-            <h1 className='text-[32px] leading-10'>電話番号を<br />入力してください</h1>
-            <p className='border-b-4 w-fit m-auto mt-[60px] mb-[40px] text-center'>
-                <input type='tel' value={number} onChange={(e) => {
-                    setNumber(e.target.value.replace(/[^\d]/g, ''));
-                }} />
-            </p>
+        <div className='mt-48 text-center px-12'>
+            <h1 className='text-2xl font-bold'>電話番号を<br />入力してください</h1>
+            {/* border-b-4 w-fit m-auto mt-[60px] mb-[40px] text-center' */}
+            <Input
+                type="tel"
+                value={phoneNumber}
+                onChange={setPhoneNumber} // 直接更新も可
+                onInputChange={handlePhoneInputChange} // カスタムロジックを適用
+                placeholder="080-1234-1234"
+                className=' m-auto mt-14 mb-6'
+            />
             <p>
                 {/* <button className='w-[294px] h-[39px] text-white rounded-xl bg-[#3570c6]'>認証コードを受け取る</button> */}
-                <Button disabled={false} text={'認証コードを受け取る'} onClick={() => {
+                <Button disabled={false} className='font-bold text-lg' wFull text={'認証コードを受け取る'} onClick={() => {
                     console.log('void');
                 }} />
             </p>
@@ -37,7 +125,7 @@ export function CreateAccountTel() {
 }
 
 
-export function Regulations() {
+export function TermsAgreement() {
     return (
         <div className='flex flex-col gap-10 justify-center h-screen mx-10'>
             <h1 className='mx-auto text-3xl'>利用するために</h1>
@@ -68,7 +156,7 @@ export function Regulations() {
     )
 }
 
-export function accountSetting() {
+export function PersonalInfoStep() {
     return (
         <div className='font-bold'>
             <div className='ml-10 mt-44'>
@@ -84,43 +172,41 @@ export function accountSetting() {
     )
 }
 
-export function gender() {
+export function GenderAndAgeSelection() {
     return (
-        <div className='font-bold'>
-            <p className='mt-44 text-center text-3xl'>あなたの性別を<br />教えてください</p>
-            <div className='flex justify-center gap-4 mt-8'>
-                <p className='flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center text-white bg-[#3570c6]'>男性</p>
-                <p className='flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center bg-gray-200'>女性</p>
+        <>
+            <div className='font-bold'>
+                <p className='mt-44 text-center text-3xl'>あなたの性別を<br />教えてください</p>
+                <div className='flex justify-center gap-4 mt-8'>
+                    <p className='flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center text-white bg-[#3570c6]'>男性</p>
+                    <p className='flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center bg-gray-200'>女性</p>
+                </div>
+                <Chevron prevLink='/accountSetting' nextLink='/accountSetting/age' />
             </div>
-            <Chevron prevLink='/accountSetting' nextLink='/accountSetting/age' />
-        </div>
+            <div className='font-bold'>
+                <div className='flex justify-center gap-4 mt-24'>
+                    <p className='flex justify-center items-end w-32 h-32 pb-4 rounded-full text-center text-white bg-[#3570c6]'>男性</p>
+                    <p className='flex justify-center items-end w-32 h-32 pb-4 rounded-full text-center bg-gray-200'>女性</p>
+                </div>
+                <p className='mt-16 text-center text-3xl'>あなたの年代を<br />教えてください</p>
+                <div className='mt-12 text-center'>
+                    <select className='border-b-2 border-gray-400 text-center font-normal'>
+                        <option>10代</option>
+                        <option>20代</option>
+                        <option>30代</option>
+                        <option>40代</option>
+                        <option>50代</option>
+                        <option>60代以上</option>
+                    </select>
+                </div>
+                <Chevron prevLink='/accountSetting/gender' nextLink='/accountSetting/name' />
+            </div>
+            )
+        </>
     )
 }
 
-export function age() {
-    return (
-        <div className='font-bold'>
-            <div className='flex justify-center gap-4 mt-24'>
-                <p className='flex justify-center items-end w-32 h-32 pb-4 rounded-full text-center text-white bg-[#3570c6]'>男性</p>
-                <p className='flex justify-center items-end w-32 h-32 pb-4 rounded-full text-center bg-gray-200'>女性</p>
-            </div>
-            <p className='mt-16 text-center text-3xl'>あなたの年代を<br />教えてください</p>
-            <div className='mt-12 text-center'>
-                <select className='border-b-2 border-gray-400 text-center font-normal'>
-                    <option>10代</option>
-                    <option>20代</option>
-                    <option>30代</option>
-                    <option>40代</option>
-                    <option>50代</option>
-                    <option>60代以上</option>
-                </select>
-            </div>
-            <Chevron prevLink='/accountSetting/gender' nextLink='/accountSetting/name' />
-        </div>
-    )
-}
-
-export function name() {
+export function UsernameSetup() {
     return (
         <div className='font-bold'>
             <p className='mt-44 text-center text-3xl'>表示名を設定<br />しましょう</p>
@@ -132,11 +218,7 @@ export function name() {
     )
 }
 
-import { FaLocationArrow } from 'react-icons/fa';
-import { FaBell } from 'react-icons/fa';
-import { FaBluetooth } from 'react-icons/fa';
-
-export function permit() {
+export function PermissionsRequest() {
     return (
         <div className='font-bold'>
             <p className='mt-36 text-center text-2xl'>最後に以下を許可してください</p>
@@ -170,7 +252,7 @@ export function permit() {
     )
 }
 
-export function accountSetting2() {
+export function CompletionScreen() {
 
     return (
         <div className='h-screen flex flex-col justify-center gap-28 text-center text-3xl font-bold'>
