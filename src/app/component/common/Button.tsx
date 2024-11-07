@@ -15,7 +15,7 @@ export default function Button(props: Props) {
         className = ''
     } = props;
 
-    const handleClick = () => {
+    function handleClick() {
         // disabledなら「無効状態です」とログに表示、disabledでなければ、任意のonClick動作を発火。
         if (disabled) {
             console.log('無効状態です');

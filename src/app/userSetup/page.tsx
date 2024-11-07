@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { get, ref } from 'firebase/database';
-import { auth, database } from '../../../firebaseConfig'; // Firebase configをインポート
+import { get, ref, set } from 'firebase/database';
+import { auth, database } from '../../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import Button from '@/app/component/common/Button';
 import Input from '../component/common/Input';
@@ -19,11 +19,11 @@ interface UserData {
 }
 
 export default function CreateAccount() {
-    const [index, setIndex] = useState<number>(0);
+    const [index, setIndex] = useState<number>(1);
     const [instagramName, setInstagramName] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchInstagramName = async (uid: string) => {
+        async function fetchInstagramName(uid: string) {
             const userRef = ref(database, `users/${uid}`);
             const snapshot = await get(userRef);
             if (snapshot.exists()) {
@@ -62,7 +62,7 @@ export default function CreateAccount() {
 
     return (
         <div>
-            {/* <div className='absolute bg-white top-0'>
+            <div className='absolute bg-white top-0'>
                 <h2 className="text-center font-bold text-lg">
                     現在のインデックス: {index}
                 </h2>
@@ -77,7 +77,7 @@ export default function CreateAccount() {
                         </button>
                     ))}
                 </div>
-            </div> */}
+            </div>
             {index !== 0 && <Notification notificationApp={'メッセージ'}
                 // サーバーから送られてきた認証コードを表示している。
                 // notificationText={`認証コード : ${pincode.pincode}`}
@@ -102,7 +102,7 @@ export default function CreateAccount() {
 export function PhoneInput() {
     const [phoneNumber, setPhoneNumber] = useState('');
 
-    const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    function handlePhoneInputChange(e: React.ChangeEvent<HTMLInputElement>) {
         // 正規表現で半角数字以外を除去
         const sanitizedValue = e.target.value.replace(/[^\d]/g, "");
 
@@ -114,15 +114,28 @@ export function PhoneInput() {
         setPhoneNumber(format(sanitizedValue.slice(0, 11)));
     };
 
+    async function savePhoneNumber() {
+        if (auth.currentUser) {
+            const userId = auth.currentUser.uid;
+            try {
+                await set(ref(database, `users/${userId}/phoneNumber`), phoneNumber);
+                console.log('電話番号が保存されました');
+            } catch (error) {
+                console.error('電話番号の保存に失敗しました:', error);
+            }
+        } else {
+            console.error('ユーザーが認証されていません');
+        }
+    };
+
     return (
         <div className='mt-48 text-center px-12'>
             <h1 className='text-2xl font-bold'>電話番号を<br />入力してください</h1>
-            {/* border-b-4 w-fit m-auto mt-[60px] mb-[40px] text-center' */}
             <Input
                 type="tel"
                 value={phoneNumber}
-                onChange={setPhoneNumber} // 直接更新も可
-                onInputChange={handlePhoneInputChange} // カスタムロジックを適用
+                onChange={setPhoneNumber}
+                onInputChange={handlePhoneInputChange}
                 placeholder="080 1234 1234"
                 className=' m-auto mt-14 mb-6'
             />
@@ -131,7 +144,7 @@ export function PhoneInput() {
                 className='font-bold text-lg'
                 wFull
                 text={'認証コードを受け取る'}
-                onClick={() => console.log('void')}
+                onClick={() => savePhoneNumber()}
             />
         </div>
     )

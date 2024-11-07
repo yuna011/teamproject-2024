@@ -20,7 +20,7 @@ export default function Home() {
     const [address, setAddress] = useState<string>('地名を取得中です...');
 
     useEffect(() => {
-        const fetchLocation = () => {
+        function fetchLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (position) => {
                     const { latitude, longitude } = position.coords;

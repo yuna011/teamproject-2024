@@ -17,7 +17,7 @@ export default function Input({
     className = '',
     onInputChange,
 }: InputProps) {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (onInputChange) {
             onInputChange(e);
         } else {
