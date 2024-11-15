@@ -1,19 +1,19 @@
 'use client'
 import { useState, useEffect, useRef, ChangeEvent, RefObject } from 'react';
-import { get, ref, set } from 'firebase/database';
-import axios from 'axios';
+import checkboxStyle from '../styles/checkbox.module.css';
+import style from '@/app/styles/primereact.module.css'
 import { auth, database } from '../../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import Button from '@/app/component/common/Button';
 import Input from '../component/common/Input';
 import { Notification } from '../component/Notification';
 import Chevron from '@/app/component/common/Chevron';
+import { get, ref, set } from 'firebase/database';
+import axios from 'axios';
 import { FaLocationArrow } from 'react-icons/fa';
 import { FaBell } from 'react-icons/fa';
 import { FaBluetooth } from 'react-icons/fa';
-import Checkbox from '../styles/checkbox.module.css';
 import { Dropdown } from 'primereact/dropdown';
-
 
 type UserData = {
     instagramName: string;
@@ -91,15 +91,15 @@ export default function CreateAccount() {
     };
 
     // 3秒後にindexを更新するuseEffect
-    // useEffect(() => {
-    //     if (index === 0) {
-    //         const timer = setTimeout(() => {
-    //             setIndex((prevIndex) => prevIndex + 1);
-    //         }, 3000);
+    useEffect(() => {
+        if (index === 0) {
+            const timer = setTimeout(() => {
+                setIndex((prevIndex) => prevIndex + 1);
+            }, 3000);
 
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [index]);
+            return () => clearTimeout(timer);
+        }
+    }, [index]);
 
     useEffect(() => {
         if (notificationVisible) {
@@ -110,7 +110,7 @@ export default function CreateAccount() {
 
     return (
         <div>
-            <div className='absolute bg-white top-0'>
+            <div className='absolute bg-white top-0 opacity-50'>
                 <h2 className="text-center font-bold text-lg">
                     現在のインデックス: {index}
                 </h2>
@@ -317,7 +317,7 @@ function AgreementItem({ text, description, optional, isChecked, onCheckChange }
                     className={`w-[18px] h-[18px] duration-75 mt-[3px] relative rounded-full cursor-pointer ${isChecked ? 'bg-[#3570C6]' : 'border-[1.5px]'}`}
                     onClick={() => onCheckChange(!isChecked)}
                 >
-                    {isChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${Checkbox.mark}`}></div>}
+                    {isChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${checkboxStyle.mark}`}></div>}
                 </div>
             </div>
             <div className="grow pl-4">
@@ -382,7 +382,7 @@ export function TermsAgreement(props: TermsAgreementProps) {
                     className={`w-[18px] h-[18px] duration-75 relative rounded-full cursor-pointer ${allChecked ? 'bg-[#3570C6]' : 'border-[1.5px]'}`}
                     onClick={toggleAllChecks}
                 >
-                    {allChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${Checkbox.mark}`}></div>}
+                    {allChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${checkboxStyle.mark}`}></div>}
                 </div>
                 <label className="ml-2 cursor-pointer">
                     全てに同意<span className="text-sm text-gray-500 ml-1">(任意)</span>
@@ -456,7 +456,8 @@ export function GenderAndAgeSelection() {
                     options={ageOptions}
                     onChange={(e) => setSelectedAgeGroup(e.value)}
                     placeholder="年齢層を選択"
-                // className="w-full max-w-xs mx-auto border-b-2 border-gray-400"
+                    // TODO importを使って無理やり幅をつけているが年齢選択後の見た目がビミョー。
+                    className={style.gender}
                 />
             </div>
         </div>
@@ -469,6 +470,7 @@ export function UsernameSetup() {
             <p className='mt-44 text-center text-3xl'>表示名を設定<br />しましょう</p>
             <div className='mt-12 px-12 text-center'>
                 <input type='text' className='w-full pl-2 border-b-2 border-gray-400' />
+                {/* <Input > */}
             </div>
             <Chevron prevLink='/accountSetting/age' nextLink='/accountSetting/permit' />
         </div>

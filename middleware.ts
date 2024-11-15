@@ -27,5 +27,5 @@ export function middleware(request: NextRequest) {
  * /auth、静的ファイル、および favicon.ico を除くすべてのパスに適用
  */
 export const config = {
-    matcher: ['/((?!auth|_next/static|favicon.ico).*)'],
+    matcher: ['/((?!auth|_next/static|favicon.ico).*)']
 };

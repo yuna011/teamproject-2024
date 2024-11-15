@@ -16,10 +16,16 @@ body {
   max-width: 428px;
   height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
+  background: #000000;
+  color: #ffffff;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.p-dropdown-items-wrapper {
+  max-height: 30rem !important;
 }

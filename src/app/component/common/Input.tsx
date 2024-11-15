@@ -1,5 +1,5 @@
 import style from '../../styles/component/common/Input.module.css'
-import { useState } from 'react'
+import { useState } from 'react';
 
 type InputProps = {
     value: string;
@@ -10,6 +10,9 @@ type InputProps = {
     onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
+
+// TODO: 理想のデータになった場合(電話番号なら11桁入力された状態)なら、underスタイルがfocus外れても消えないようにする
+// 現在は電話番号のみなので、それ以外でも適切に管理できるようにしなければならないね
 export default function Input({
     value,
     onChange,
@@ -20,7 +23,7 @@ export default function Input({
 }: InputProps) {
     const [isValid, setIsValid] = useState(false);
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
         if (onInputChange) {
             onInputChange(e);
