@@ -40,7 +40,7 @@ export default function Input({
                 value={value}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className={`block w-full pb-1 text-2xl text-center text-gray-700 border-b-2 border-gray-300 outline-none ${style.input}`}
+                className={`block w-full pb-1 text-2xl text-center text-gray-700 bg-black outline-none ${style.input}`}
             />
             <span className={`${style.under} ${isValid ? style.active : ''}`}></span>
         </div>

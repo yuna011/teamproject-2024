@@ -7,13 +7,12 @@ import { onAuthStateChanged } from 'firebase/auth';
 import Button from '@/app/component/common/Button';
 import Input from '../component/common/Input';
 import { Notification } from '../component/Notification';
-import Chevron from '@/app/component/common/Chevron';
 import { get, ref, set } from 'firebase/database';
 import axios from 'axios';
-import { FaLocationArrow } from 'react-icons/fa';
-import { FaBell } from 'react-icons/fa';
-import { FaBluetooth } from 'react-icons/fa';
 import { Dropdown } from 'primereact/dropdown';
+import { FaLocationArrow, FaBell, FaBluetooth, FaInstagram, FaApple} from 'react-icons/fa';
+import { FcGoogle } from "react-icons/fc";
+
 
 type UserData = {
     instagramName: string;
@@ -32,9 +31,10 @@ type PhoneInputProps = {
     onPhoneNumberSubmit: (phoneNumber: string) => void;
 };
 
-type TermsAgreementProps = {
-    onTermsAgreement: () => void;
-}
+type WelcomePageProps = {
+    onWelcomePage: () => void;
+};
+
 
 export default function CreateAccount() {
     const [index, setIndex] = useState<number>(0);
@@ -110,8 +110,9 @@ export default function CreateAccount() {
 
     return (
         <div>
-            <div className='absolute bg-white top-0 opacity-50'>
-                <h2 className="text-center font-bold text-lg">
+            {/* アニメーションつけたらページ変更できないので一時的にz-indexを入れてます */}
+            <div className='absolute bg-white top-0 opacity-50 z-10'>
+                <h2 className="text-center font-bold text-lg text-black">
                     現在のインデックス: {index}
                 </h2>
                 <div className="flex justify-center gap-2 my-4">
@@ -132,15 +133,19 @@ export default function CreateAccount() {
                     notificationText={`認証コード : ${pincode}`}
                 />
             )}
-            {index === 0 && (
-                <h1 className='mt-20 ml-6 leading-10 text-3xl font-bold'>
-                    ようこそ、<br />@{instagramName || 'ゲスト'}
-                </h1>
-            )}
+            {index === 0 && <WelcomePage onWelcomePage={nextPage}/>}
             {index === 1 && (
-                <PhoneInput onCodeGenerated={handleCodeGenerated} onPhoneNumberSubmit={handlePhoneNumberSubmit} />
+                <div >
+                    <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+                    <h1 className='mt-12 ml-6 leading-10 text-2xl font-bold'>
+                        Welcome<br />@{instagramName || 'ゲスト'}
+                    </h1>
+                </div>
             )}
             {index === 2 && (
+                <PhoneInput onCodeGenerated={handleCodeGenerated} onPhoneNumberSubmit={handlePhoneNumberSubmit} />
+            )}
+            {index === 3 && (
                 <VerificationCodeInput
                     phoneNumber={phoneNumber}
                     pincode={pincode}
@@ -148,12 +153,81 @@ export default function CreateAccount() {
                     onVerificationSuccess={nextPage}
                 />
             )}
-            {index === 3 && <TermsAgreement onTermsAgreement={nextPage} />}
             {index === 4 && <PersonalInfoStep />}
             {index === 5 && <GenderAndAgeSelection />}
             {index === 6 && <UsernameSetup />}
             {index === 7 && <PermissionsRequest />}
             {index === 8 && <CompletionScreen />}
+        </div>
+    );
+}
+
+
+export function WelcomePage(props: WelcomePageProps) {
+    const [animationComplete, setAnimationComplete] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setAnimationComplete(true);
+        }, 1500); // 1秒後にアニメーションを開始
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="relative text-center" style={{ minHeight: '100vh' }}>
+            <div
+                className={`h-screen flex justify-center items-center transition-all duration-1000 ${
+                    animationComplete ? 'pointer-events-auto' : 'pointer-events-auto'
+                }`}
+                style={{
+                    transform: animationComplete ? 'translateY(-30%)' : 'translateY(0)',
+                }}
+            >
+                <img
+                    src="../images/Me..svg"
+                    alt="Me."
+                />
+            </div>
+            <div
+                className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 ${
+                    animationComplete ? 'opacity-1 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+            >
+                <p className="mb-24 leading-8">
+                    瞬間でつながる、新しい出会い。
+                    <br />
+                    あなたの生活に寄り添うリストを、
+                    <br />
+                    どこへ行ってもシェアしよう。
+                </p>
+                <div className="flex flex-col gap-4">
+                    <button
+                        className="w-[327px] mx-auto py-3 flex justify-center items-center gap-2 text-[#222] rounded bg-white pointer-events-none"
+                        aria-label="Appleでサインイン"
+                    >
+                        <FaApple />
+                        <p>Sign in with Apple</p>
+                    </button>
+                    <button
+                        className="w-[327px] mx-auto py-3 flex justify-center items-center gap-2 rounded bg-[#5d83e5]"
+                        aria-label="Googleでサインイン"
+                    >
+                        <FcGoogle className="w-5 h-5 p-0.5 bg-white rounded-full" />
+                        <p>Sign in with Google</p>
+                    </button>
+                    <button
+                        className="w-[327px] mx-auto py-3 flex justify-center items-center gap-2 font-bold rounded bg-gradient-to-r from-[#8e39a7] via-[#fd1e1e] to-[#fbae44]"
+                        aria-label="Instagramで続行"
+                    >
+                        <FaInstagram />
+                        <p>Instagramで続行</p>
+                    </button>
+                </div>
+                <p className="mt-4 text-xs underline">Sign up with your email</p>
+                <p className="mt-8 text-xs text-gray-400">
+                    ©️ 2024 Im not ningnign All Rights Reserved.
+                </p>
+            </div>
         </div>
     );
 }
@@ -186,25 +260,29 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
     };
 
     return (
-        <div className='mt-48 text-center px-12'>
-            <h2 className='text-2xl mb-8'>電話番号を入力</h2>
-            <p>日本国内でSMS受信可能な<br />
-                電話番号を入力してください。</p>
-            <Input
-                type="tel"
-                value={phoneNumber}
-                onChange={setPhoneNumber}
-                onInputChange={handlePhoneInputChange}
-                placeholder="080 1234 1234"
-                className='m-auto mt-14 mb-6'
-            />
-            <Button
-                disabled={phoneNumber.replace(/\s/g, '').length !== 11}
-                className='font-bold text-lg'
-                wFull
-                text={'認証コードを受け取る'}
-                onClick={savePhoneNumber}
-            />
+        <div>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <div className='mt-24 text-center px-12'>
+                <h2 className='text-lg mb-8'>create your account using your <br />phone number</h2>
+                <Input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={setPhoneNumber}
+                    onInputChange={handlePhoneInputChange}
+                    placeholder="Phone number"
+                    className='m-auto mt-14 mb-6'
+                    />
+                <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-8">                
+                    <p className='mb-2 text-[9px] text-gray-400'>By tapping "Continue", you agree to our Privacy Policy and Terms of Service</p>
+                    <Button
+                        disabled={phoneNumber.replace(/\s/g, '').length !== 11}
+                        // className="fixed bottom-4 left-1/2 transform -translate-x-1/2"
+                        wFull
+                        text={'Continue'}
+                        onClick={savePhoneNumber}
+                        />
+                </div>
+            </div>
         </div>
     );
 }
@@ -268,147 +346,50 @@ export function VerificationCodeInput({
     };
 
     return (
-        <div className="mt-48 text-center px-12">
-            <h2 className="text-2xl">認証コードを入力</h2>
-            <p className="my-6 text-gray-600">
-                {phoneNumber}にSMSで送信された<br />
-                4桁の認証コードを入力してください。
-            </p>
-            {isError && <p className='text-red-600 font-bold'>認証コードが違います</p>}
-            <div className="flex justify-center mt-4 space-x-2">
-                {refs.map((ref, index) => (
-                    <input
-                        key={index}
-                        type="text"
-                        maxLength={1}
-                        ref={ref}
-                        value={code[index]}
-                        onChange={(e) => handleInputChange(e, index)}
-                        className="w-12 h-12 text-xl text-center border-b-2 border-gray-300 focus:outline-none"
-                    />
-                ))}
-            </div>
-            <button
-                onClick={regenerateCode}
-                className="mt-8 text-sm text-blue-500 underline font-bold"
-            >
-                認証コードを再送信する
+        <div>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <div className="mt-24 text-center px-12">
+                <h2 className="text-lg">Please enter the verification code<br />sent to your phone</h2>
+                {isError && <p className='mt-4 text-[#00abc2] font-bold'>Authentication code is wrong!</p>}
+                <div className="flex justify-center mt-8 space-x-2">
+                    {refs.map((ref, index) => (
+                        <input
+                            key={index}
+                            type="text"
+                            maxLength={1}
+                            ref={ref}
+                            value={code[index]}
+                            onChange={(e) => handleInputChange(e, index)}
+                            className="w-12 h-12 text-xl text-center border-b-2 border-gray-400 bg-black focus:outline-none"
+                        />
+                    ))}
+                </div>
+                <button
+                    onClick={regenerateCode}
+                    className="mt-4 text-xs text-gray-600"
+                >
+                    Didn't receive the code?<span className='pl-1 text-gray-500 underline'>Resend now.</span>
             </button>
-        </div>
-
-
-
-    );
-}
-
-type AgreementItemProps = {
-    text: string;
-    description?: string;
-    optional?: boolean;
-    isChecked: boolean;
-    onCheckChange: (checked: boolean) => void;
-};
-
-function AgreementItem({ text, description, optional, isChecked, onCheckChange }: AgreementItemProps) {
-    return (
-        <div className="flex">
-            <div className="h-full">
-                <div
-                    className={`w-[18px] h-[18px] duration-75 mt-[3px] relative rounded-full cursor-pointer ${isChecked ? 'bg-[#3570C6]' : 'border-[1.5px]'}`}
-                    onClick={() => onCheckChange(!isChecked)}
-                >
-                    {isChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${checkboxStyle.mark}`}></div>}
-                </div>
             </div>
-            <div className="grow pl-4">
-                <p className="text-lg">
-                    {text}
-                    {optional && <span className="text-sm text-gray-500 ml-1">(任意)</span>}
-                </p>
-                {description && <p className="text-xs text-[#BBBBBB] mt-1">{description}</p>}
-                <p className="w-fit mt-1 text-xs border-b border-black cursor-pointer font-bold">詳細</p>
-            </div>
-        </div>
-    );
-}
-
-export function TermsAgreement(props: TermsAgreementProps) {
-    const [checkedItems, setCheckedItems] = useState({
-        license: false,
-        terms: false,
-        privacy: false,
-        diagnostics: false,
-    });
-
-    const items = [
-        { key: 'license', text: 'エンドユーザーライセンス契約', description: 'アプリの安全性、セキュリティ機能を保証するために自動更新に同意' },
-        { key: 'terms', text: '利用規約', description: 'アプリの安全性、セキュリティ機能を保証するために自動更新に同意' },
-        { key: 'privacy', text: 'プライバシーポリシー' },
-        { key: 'diagnostics', text: '診断データの送信', optional: true },
-    ];
-
-    const allChecked = Object.values(checkedItems).slice(0, 4).every(Boolean);
-
-    const handleIndividualCheckChange = (key: string, checked: boolean) => {
-        setCheckedItems((prev) => ({ ...prev, [key]: checked }));
-    };
-
-    const toggleAllChecks = () => {
-        const newCheckState = !allChecked;
-        setCheckedItems(() => ({
-            license: newCheckState,
-            terms: newCheckState,
-            privacy: newCheckState,
-            diagnostics: newCheckState,
-        }));
-    };
-
-    return (
-        <div className="flex flex-col gap-6 justify-center h-screen mx-10 mt-16">
-            <h1 className="mx-auto text-2xl mb-4">利用するために</h1>
-            {items.map(({ key, text, description, optional }) => (
-                <AgreementItem
-                    key={key}
-                    text={text}
-                    description={description}
-                    optional={optional}
-                    isChecked={checkedItems[key as keyof typeof checkedItems]}
-                    onCheckChange={(checked) => handleIndividualCheckChange(key, checked)}
-                />
-            ))}
-            <div className="mx-auto border-dashed border-t-2 w-full my-6"></div>
-            <div className="flex items-center">
-                <div
-                    className={`w-[18px] h-[18px] duration-75 relative rounded-full cursor-pointer ${allChecked ? 'bg-[#3570C6]' : 'border-[1.5px]'}`}
-                    onClick={toggleAllChecks}
-                >
-                    {allChecked && <div className={`absolute inset-0 m-auto w-[10px] h-[10px] rounded-full ${checkboxStyle.mark}`}></div>}
-                </div>
-                <label className="ml-2 cursor-pointer">
-                    全てに同意<span className="text-sm text-gray-500 ml-1">(任意)</span>
-                </label>
-            </div>
-            <Button
-                disabled={!allChecked}
-                className="w-fit mt-12 py-2 px-4 self-end"
-                text="同意する"
-                onClick={props.onTermsAgreement}
-            />
         </div>
     );
 }
 
 export function PersonalInfoStep() {
     return (
-        // TODO overflowいるかな？
-        <div className='font-bold overflow-hidden'>
-            <div className='ml-10 mt-44'>
-                <p className='w-fit px-4 py-1 rounded-2xl text-white bg-[#3570C6]'>STEP1</p>
-                <p className='mt-10 text-3xl leading-[1.4]'>あなたのことを<br />教えてください</p>
-            </div>
-            <div className='absolute bottom-0 w-full h-[400px] flex items-end justify-center rounded-t-[999px] scale-150 bg-[#3570c6]'>
-            </div>
-            <Button disabled={false} text={'次へ'} inversion onClick={() => { }} />
+        <div>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <h1 className='mt-24 text-center leading-8'>
+                登録と認証が完了しました。<br />
+                あなたの素晴らしいプロフィールを<br />
+                是非教えてください。
+            </h1>
+            <Button
+                disabled={false}
+                className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
+                text="OK"
+                onClick={() => {}}
+            />
         </div>
     )
 }
@@ -432,93 +413,123 @@ export function GenderAndAgeSelection() {
 
     return (
         <div className='font-bold'>
-            <p className='mt-44 text-center text-2xl'>あなたの性別と年代は?</p>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <p className='mt-24 text-center text-lg'>Select your gender.</p>
             <div className='flex justify-center gap-4 mt-8'>
                 <p
-                    className={`flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center cursor-pointer transition-all duration-300 ease-in-out transform ${selectedGender === '男性' ? 'text-white bg-[#3570c6]' : 'bg-gray-200'}`}
+                    className={`flex flex-col justify-center items-center w-36 h-36 rounded-full border border-gray-600 cursor-pointer transition-all duration-300 ease-in-out transform  ${selectedGender === '男性' ? 'text-black bg-white' : 'bg-black'}`}
                     onClick={() => handleGenderSelect('男性')}
                 >
-                    男性
+                    <span>man</span> {/* 文字を表示 */}
+                    <img
+                        src="../images/man.svg"
+                        alt="man"
+                        className="w-16 h-16 mt-4"
+                    />
                 </p>
                 <p
-                    className={`flex justify-center items-end w-36 h-36 pb-4 rounded-full text-center cursor-pointer transition-all duration-300 ease-in-out transform ${selectedGender === '女性' ? 'text-white bg-[#3570c6]' : 'bg-gray-200'}`}
+                    className={`flex flex-col justify-center items-center w-36 h-36 rounded-full border border-gray-600 cursor-pointer transition-all duration-300 ease-in-out transform ${selectedGender === '女性' ? 'text-black bg-white' : 'bg-black'}`}
                     onClick={() => handleGenderSelect('女性')}
                 >
-                    女性
+                    <span>woman</span>
+                    <img
+                        src="../images/woman.svg"
+                        alt="woman"
+                        className={`w-16 h-16 mt-4`}
+                    />                
                 </p>
             </div>
-            {/* TODO いい感じのコンポーネントですね。prevとnextの動作をより厳密にする */}
-            <Chevron prevLink='/accountSetting' nextLink='/accountSetting/age' />
 
             <div className='mt-12 text-center'>
+                <p>Select your age group.</p>
                 <Dropdown
                     value={selectedAgeGroup}
                     options={ageOptions}
                     onChange={(e) => setSelectedAgeGroup(e.value)}
-                    placeholder="年齢層を選択"
+                    placeholder="20代"
                     // TODO importを使って無理やり幅をつけているが年齢選択後の見た目がビミョー。
                     className={style.gender}
                 />
             </div>
+            <Button
+                disabled={false}
+                className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
+                text="Next"
+                onClick={() => { }}
+            />
         </div>
     );
 }
 
 export function UsernameSetup() {
     return (
-        <div className='font-bold'>
-            <p className='mt-44 text-center text-3xl'>表示名を設定<br />しましょう</p>
-            <div className='mt-12 px-12 text-center'>
-                <input type='text' className='w-full pl-2 border-b-2 border-gray-400' />
+        <div>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <p className='mt-24 text-center text-lg font-bold'>Let's set up your Profile</p>
+            <img src="../images/userIcon.svg" alt="" className='mx-auto mt-8'/>
+            <div className='mt-8 px-12 text-center'>
+                <input type='text' placeholder='user name' className='w-full pl-2 text-center text-2xl font-bold border-b-2 border-gray-400 bg-black' />
                 {/* <Input > */}
             </div>
-            <Chevron prevLink='/accountSetting/age' nextLink='/accountSetting/permit' />
+            <div className='w-fit mx-auto mt-8 py-1 px-6 flex gap-2 items-center text-black rounded-xl bg-white'>
+                <FaInstagram />
+                <p>Use the same as Instagram</p>
+            </div>
+            <Button
+                disabled={false}
+                className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
+                text="Next"
+                onClick={() => { }}
+            />
         </div>
     )
 }
 
 export function PermissionsRequest() {
     return (
-        <div className='font-bold'>
-            <p className='mt-36 text-center text-2xl'>最後に以下を許可してください</p>
-            <div className='flex flex-col gap-8 mt-12 m-4 p-4 rounded bg-gray-100'>
+        <div>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <p className='mt-8 text-center'>お疲れ様でした</p>
+            <p className='mt-8 text-center'>最後に以下を許可して<br />すれちがい通信を楽しみましょう！</p>
+            <div className='flex flex-col gap-8 mt-12 m-4 p-4 rounded bg-white/20 '>
                 <div className='flex items-center gap-4 px-4'>
                     <FaLocationArrow size={50} />
                     <div>
                         <p>位置情報の利用</p>
-                        <p className='font-normal'>すれちがい機能のために必要です。権限がなくても利用できますが、誰ともすれちがえなくなります。</p>
+                        <p className='mt-2 text-sm'>すれちがい機能のために必要です。権限がなくても利用できますが、誰ともすれちがえなくなります。</p>
                     </div>
                 </div>
                 <div className='flex items-center gap-4 px-4'>
                     <FaBell size={50} />
                     <div>
                         <p>通知の設定</p>
-                        <p className='font-normal'>すれちがいできた時、誰かがあなたにコンタクトを求めた時、その他様々なシーンでお知らせします</p>
+                        <p className='mt-2 text-sm'>すれちがいできた時、誰かがあなたにコンタクトを求めた時、その他様々なシーンでお知らせします</p>
                     </div>
                 </div>
                 <div className='flex items-center gap-4 px-4'>
                     <FaBluetooth size={50} />
                     <div>
                         <p>Bluetoothの有効化</p>
-                        <p className='font-normal'>GPSのみの位置情報は性格ではありません。Bluetoothの有効化によって消費する電力はごくわずかです。</p>
+                        <p className='mt-2 text-sm'>GPSのみの位置情報は性格ではありません。Bluetoothの有効化によって消費する電力はごくわずかです。</p>
                     </div>
                 </div>
             </div>
-            <div className='w-fit mt-20 mx-auto px-36 py-2 rounded-3xl text-center text-white bg-[#3570c6] '>
-                <a href='/accountSetting/fin'><Button disabled={false} text={'すすむ'} onClick={() => { }} /></a>
-            </div>
+            <Button 
+                disabled={false} 
+                text='Continue' 
+                onClick={() => { }} 
+                className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
+            />
         </div>
     )
 }
 
 export function CompletionScreen() {
-
     return (
         <div className='h-screen flex flex-col justify-center gap-28 text-center text-3xl font-bold'>
             <h1>おつかれさまでした</h1>
             <h2>すれちがいを<br />始めましょう！</h2>
             <img src='../images/woman.png' alt='' className='pr-4 w-[250px] self-end' />
-
         </div>
     )
 }

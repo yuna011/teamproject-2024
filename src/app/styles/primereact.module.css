@@ -1,3 +1,6 @@
 .gender {
-    width: 10rem !important;
+    width: 6rem !important;
+    background-color: black;
+    border-bottom: solid 1px gray;
+    color: white;
 }
