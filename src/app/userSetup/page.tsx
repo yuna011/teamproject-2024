@@ -10,7 +10,7 @@ import { Notification } from '../component/Notification';
 import { get, ref, set } from 'firebase/database';
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
-import { FaLocationArrow, FaBell, FaBluetooth, FaInstagram, FaApple} from 'react-icons/fa';
+import { FaLocationArrow, FaBell, FaBluetooth, FaInstagram, FaApple } from 'react-icons/fa';
 import { FcGoogle } from "react-icons/fc";
 
 
@@ -133,10 +133,10 @@ export default function CreateAccount() {
                     notificationText={`認証コード : ${pincode}`}
                 />
             )}
-            {index === 0 && <WelcomePage onWelcomePage={nextPage}/>}
+            {index === 0 && <WelcomePage onWelcomePage={nextPage} />}
             {index === 1 && (
                 <div >
-                    <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+                    <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
                     <h1 className='mt-12 ml-6 leading-10 text-2xl font-bold'>
                         Welcome<br />@{instagramName || 'ゲスト'}
                     </h1>
@@ -176,9 +176,8 @@ export function WelcomePage(props: WelcomePageProps) {
     return (
         <div className="relative text-center" style={{ minHeight: '100vh' }}>
             <div
-                className={`h-screen flex justify-center items-center transition-all duration-1000 ${
-                    animationComplete ? 'pointer-events-auto' : 'pointer-events-auto'
-                }`}
+                className={`h-screen flex justify-center items-center transition-all duration-1000 ${animationComplete ? 'pointer-events-auto' : 'pointer-events-auto'
+                    }`}
                 style={{
                     transform: animationComplete ? 'translateY(-30%)' : 'translateY(0)',
                 }}
@@ -189,9 +188,8 @@ export function WelcomePage(props: WelcomePageProps) {
                 />
             </div>
             <div
-                className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 ${
-                    animationComplete ? 'opacity-1 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}
+                className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 ${animationComplete ? 'opacity-1 translate-y-0' : 'opacity-0 translate-y-10'
+                    }`}
             >
                 <p className="mb-24 leading-8">
                     瞬間でつながる、新しい出会い。
@@ -261,7 +259,7 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
 
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <div className='mt-24 text-center px-12'>
                 <h2 className='text-lg mb-8'>create your account using your <br />phone number</h2>
                 <Input
@@ -271,8 +269,8 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
                     onInputChange={handlePhoneInputChange}
                     placeholder="Phone number"
                     className='m-auto mt-14 mb-6'
-                    />
-                <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-8">                
+                />
+                <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-8">
                     <p className='mb-2 text-[9px] text-gray-400'>By tapping "Continue", you agree to our Privacy Policy and Terms of Service</p>
                     <Button
                         disabled={phoneNumber.replace(/\s/g, '').length !== 11}
@@ -280,7 +278,7 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
                         wFull
                         text={'Continue'}
                         onClick={savePhoneNumber}
-                        />
+                    />
                 </div>
             </div>
         </div>
@@ -347,7 +345,7 @@ export function VerificationCodeInput({
 
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <div className="mt-24 text-center px-12">
                 <h2 className="text-lg">Please enter the verification code<br />sent to your phone</h2>
                 {isError && <p className='mt-4 text-[#00abc2] font-bold'>Authentication code is wrong!</p>}
@@ -369,7 +367,7 @@ export function VerificationCodeInput({
                     className="mt-4 text-xs text-gray-600"
                 >
                     Didn't receive the code?<span className='pl-1 text-gray-500 underline'>Resend now.</span>
-            </button>
+                </button>
             </div>
         </div>
     );
@@ -378,7 +376,7 @@ export function VerificationCodeInput({
 export function PersonalInfoStep() {
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <h1 className='mt-24 text-center leading-8'>
                 登録と認証が完了しました。<br />
                 あなたの素晴らしいプロフィールを<br />
@@ -388,7 +386,7 @@ export function PersonalInfoStep() {
                 disabled={false}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
                 text="OK"
-                onClick={() => {}}
+                onClick={() => { }}
             />
         </div>
     )
@@ -413,7 +411,7 @@ export function GenderAndAgeSelection() {
 
     return (
         <div className='font-bold'>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <p className='mt-24 text-center text-lg'>Select your gender.</p>
             <div className='flex justify-center gap-4 mt-8'>
                 <p
@@ -436,7 +434,7 @@ export function GenderAndAgeSelection() {
                         src="../images/woman.svg"
                         alt="woman"
                         className={`w-16 h-16 mt-4`}
-                    />                
+                    />
                 </p>
             </div>
 
@@ -464,9 +462,9 @@ export function GenderAndAgeSelection() {
 export function UsernameSetup() {
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <p className='mt-24 text-center text-lg font-bold'>Let's set up your Profile</p>
-            <img src="../images/userIcon.svg" alt="" className='mx-auto mt-8'/>
+            <img src="../images/userIcon.svg" alt="" className='mx-auto mt-8' />
             <div className='mt-8 px-12 text-center'>
                 <input type='text' placeholder='user name' className='w-full pl-2 text-center text-2xl font-bold border-b-2 border-gray-400 bg-black' />
                 {/* <Input > */}
@@ -488,7 +486,7 @@ export function UsernameSetup() {
 export function PermissionsRequest() {
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12'/>
+            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <p className='mt-8 text-center'>お疲れ様でした</p>
             <p className='mt-8 text-center'>最後に以下を許可して<br />すれちがい通信を楽しみましょう！</p>
             <div className='flex flex-col gap-8 mt-12 m-4 p-4 rounded bg-white/20 '>
@@ -514,10 +512,10 @@ export function PermissionsRequest() {
                     </div>
                 </div>
             </div>
-            <Button 
-                disabled={false} 
-                text='Continue' 
-                onClick={() => { }} 
+            <Button
+                disabled={false}
+                text='Continue'
+                onClick={() => { }}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
             />
         </div>
