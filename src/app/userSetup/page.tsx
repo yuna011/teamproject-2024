@@ -1,10 +1,11 @@
 'use client'
 import { useState, useEffect, useRef, ChangeEvent, RefObject } from 'react';
-import checkboxStyle from '../styles/checkbox.module.css';
+// import checkboxStyle from '../styles/checkbox.module.css';
 import style from '@/app/styles/primereact.module.css'
 import { auth, database } from '../../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import Button from '@/app/component/common/Button';
+import SignInButton from '@/app/component/common/userSetup/signInButton';
 import Input from '../component/common/Input';
 import { Notification } from '../component/Notification';
 import { get, ref, set } from 'firebase/database';
@@ -16,7 +17,7 @@ import { FcGoogle } from "react-icons/fc";
 
 type UserData = {
     instagramName: string;
-    [key: string]: any;
+    [key: string]: string;
 };
 
 type VerificationCodeInputProps = {
@@ -91,15 +92,15 @@ export default function CreateAccount() {
     };
 
     // 3秒後にindexを更新するuseEffect
-    useEffect(() => {
-        if (index === 0) {
-            const timer = setTimeout(() => {
-                setIndex((prevIndex) => prevIndex + 1);
-            }, 3000);
+    // useEffect(() => {
+    //     if (index === 0) {
+    //         const timer = setTimeout(() => {
+    //             setIndex((prevIndex) => prevIndex + 1);
+    //         }, 3000);
 
-            return () => clearTimeout(timer);
-        }
-    }, [index]);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [index]);
 
     useEffect(() => {
         if (notificationVisible) {
@@ -199,34 +200,31 @@ export function WelcomePage(props: WelcomePageProps) {
                     どこへ行ってもシェアしよう。
                 </p>
                 <div className="flex flex-col gap-4">
-                    <button
-                        className="w-[327px] mx-auto py-3 flex justify-center items-center gap-2 text-[#222] rounded bg-white pointer-events-none"
-                        aria-label="Appleでサインイン"
+                    <SignInButton
+                        className='text-[#222] bg-white'
+                        text='Sign in with Apple'
+                        icon={<FaApple />}
                     >
-                        <FaApple />
-                        <p>Sign in with Apple</p>
-                    </button>
-                    <button
-                        className="w-[327px] mx-auto py-3 flex justify-center items-center gap-2 rounded bg-[#5d83e5]"
-                        aria-label="Googleでサインイン"
+                    </SignInButton>
+                    <SignInButton
+                        text='Sign in with Google'
+                        icon={<FcGoogle className="w-5 h-5 p-0.5 bg-white rounded-full" />}
+                        className='bg-[#5d83e5]'
                     >
-                        <FcGoogle className="w-5 h-5 p-0.5 bg-white rounded-full" />
-                        <p>Sign in with Google</p>
-                    </button>
-                    <button
-                        className="w-[327px] mx-auto py-3 flex justify-center items-center gap-2 font-bold rounded bg-gradient-to-r from-[#8e39a7] via-[#fd1e1e] to-[#fbae44]"
-                        aria-label="Instagramで続行"
-                    >
-                        <FaInstagram />
-                        <p>Instagramで続行</p>
-                    </button>
+                    </SignInButton>
+                    <SignInButton
+                        text='Sign in with Instagram'
+                        onClick={() => props.onWelcomePage()}
+                        icon={<FaInstagram />}
+                        className='bg-gradient-to-r from-[#8e39a7] via-[#fd1e1e] to-[#fbae44]'
+                    ></SignInButton>
                 </div>
                 <p className="mt-4 text-xs underline">Sign up with your email</p>
                 <p className="mt-8 text-xs text-gray-400">
-                    ©️ 2024 Im not ningnign All Rights Reserved.
+                    ©️ 2024 I&apos;m not ningning All Rights Reserved.
                 </p>
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -366,7 +364,7 @@ export function VerificationCodeInput({
                     onClick={regenerateCode}
                     className="mt-4 text-xs text-gray-600"
                 >
-                    Didn't receive the code?<span className='pl-1 text-gray-500 underline'>Resend now.</span>
+                    Didn&apos;t receive the code?<span className='pl-1 text-gray-500 underline'>Resend now.</span>
                 </button>
             </div>
         </div>
