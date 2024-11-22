@@ -30,7 +30,7 @@ export default function Button(props: Props) {
     const fullWidthClass = wFull ? 'mx-auto w-full' : '';
 
     // 通常時と反転時のスタイルクラス
-    const activeClass = inversion ? 'bg-white text-[#3570C6]' : 'bg-[#3570C6] text-white';
+    const activeClass = inversion ? 'bg-white text-[#3570C6]' : 'bg-[#3570C6]';
     const disabledClass = 'cursor-not-allowed opacity-50';
 
     // 組み合わせたクラス名
