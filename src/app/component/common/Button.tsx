@@ -26,11 +26,11 @@ export default function Button(props: Props) {
     };
 
     // ボタンの基本クラス
-    const baseClass = 'w-[327px] py-2 text-black font-bold rounded bg-white';
+    const baseClass = 'w-[327px] py-2 text-black font-bold rounded bg-[#fff]';
     const fullWidthClass = wFull ? 'mx-auto w-full' : '';
 
     // 通常時と反転時のスタイルクラス
-    const activeClass = inversion ? 'bg-white text-[#3570C6]' : 'bg-[#3570C6]';
+    const activeClass = inversion ? 'bg-white text-[#fff]' : 'bg-[#000]';
     const disabledClass = 'cursor-not-allowed opacity-50';
 
     // 組み合わせたクラス名

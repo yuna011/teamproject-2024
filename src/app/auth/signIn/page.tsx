@@ -7,12 +7,12 @@ export default function Signin() {
           <img src='/images/InstagramLogo.svg' alt='InstagramLogo' />
         </p>
         <p>
-          <img src='/images/account.png' alt='Account' />
+          <img src='/images/account.jpg' alt='Account' />
         </p>
         <p className='m-3'>ryota11_07</p>
         <p className='w-[343px]  py-3 px-32 rounded text-center bg-blue-500 '>
-        <button
-            >Log in</button>
+          <button
+          >Log in</button>
         </p>
         <p className='mt-6 text-blue-500'>Switch accounts</p>
       </div>
