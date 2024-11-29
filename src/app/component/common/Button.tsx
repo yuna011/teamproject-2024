@@ -26,7 +26,7 @@ export default function Button(props: Props) {
     };
 
     // ボタンの基本クラス
-    const baseClass = 'w-[327px] py-2 text-[#222] font-bold rounded bg-white';
+    const baseClass = 'w-[327px] py-2 text-black font-bold rounded bg-white';
     const fullWidthClass = wFull ? 'mx-auto w-full' : '';
 
     // 通常時と反転時のスタイルクラス

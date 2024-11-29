@@ -15,6 +15,14 @@ import { FaLocationArrow, FaBell, FaBluetooth, FaInstagram, FaApple } from 'reac
 import { FcGoogle } from "react-icons/fc";
 
 
+type WelcomePageProps = {
+    onWelcomePage: () => void;
+};
+
+type SigninProps = {
+    onSignin: () => void;
+};
+
 type UserData = {
     instagramName: string;
     [key: string]: string;
@@ -32,8 +40,20 @@ type PhoneInputProps = {
     onPhoneNumberSubmit: (phoneNumber: string) => void;
 };
 
-type WelcomePageProps = {
-    onWelcomePage: () => void;
+type PersonalInfoStepProps = {
+    onPersonalInfoStep: () => void;
+};
+
+type GenderAndAgeSelectionProps = {
+    onGenderAndAgeSelection: () => void;
+};
+
+type UsernameSetupProps = {
+    onUsernameSetup: () => void;
+};
+
+type PermissionsRequestProps = {
+    onPermissionsRequest: () => void;
 };
 
 
@@ -117,7 +137,7 @@ export default function CreateAccount() {
                     現在のインデックス: {index}
                 </h2>
                 <div className="flex justify-center gap-2 my-4">
-                    {[...Array(8)].map((_, i) => (
+                    {[...Array(9)].map((_, i) => (
                         <button
                             key={i}
                             onClick={() => handleIndexChange(i)}
@@ -135,7 +155,8 @@ export default function CreateAccount() {
                 />
             )}
             {index === 0 && <WelcomePage onWelcomePage={nextPage} />}
-            {index === 1 && (
+            {index === 1 && <Signin onSignin={nextPage}/>}
+            {index === 2 && (
                 <div >
                     <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
                     <h1 className='mt-12 ml-6 leading-10 text-2xl font-bold'>
@@ -143,10 +164,10 @@ export default function CreateAccount() {
                     </h1>
                 </div>
             )}
-            {index === 2 && (
+            {index === 3 && (
                 <PhoneInput onCodeGenerated={handleCodeGenerated} onPhoneNumberSubmit={handlePhoneNumberSubmit} />
             )}
-            {index === 3 && (
+            {index === 4 && (
                 <VerificationCodeInput
                     phoneNumber={phoneNumber}
                     pincode={pincode}
@@ -154,11 +175,11 @@ export default function CreateAccount() {
                     onVerificationSuccess={nextPage}
                 />
             )}
-            {index === 4 && <PersonalInfoStep />}
-            {index === 5 && <GenderAndAgeSelection />}
-            {index === 6 && <UsernameSetup />}
-            {index === 7 && <PermissionsRequest />}
-            {index === 8 && <CompletionScreen />}
+            {index === 5 && <PersonalInfoStep onPersonalInfoStep={nextPage} />}
+            {index === 6 && <GenderAndAgeSelection onGenderAndAgeSelection={nextPage} />}
+            {index === 7 && <UsernameSetup onUsernameSetup={nextPage} />}
+            {index === 8 && <PermissionsRequest onPermissionsRequest={nextPage} />}
+            {index === 9 && <CompletionScreen />}
         </div>
     );
 }
@@ -166,13 +187,14 @@ export default function CreateAccount() {
 
 export function WelcomePage(props: WelcomePageProps) {
     const [animationComplete, setAnimationComplete] = useState(false);
-
     useEffect(() => {
         const timer = setTimeout(() => {
             setAnimationComplete(true);
-        }, 1500); // 1秒後にアニメーションを開始
+        }, 1000);
         return () => clearTimeout(timer);
     }, []);
+
+    
 
     return (
         <div className="relative text-center" style={{ minHeight: '100vh' }}>
@@ -192,7 +214,7 @@ export function WelcomePage(props: WelcomePageProps) {
                 className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 ${animationComplete ? 'opacity-1 translate-y-0' : 'opacity-0 translate-y-10'
                     }`}
             >
-                <p className="mb-24 leading-8">
+                <p className="mb-52 leading-8">
                     瞬間でつながる、新しい出会い。
                     <br />
                     あなたの生活に寄り添うリストを、
@@ -220,13 +242,39 @@ export function WelcomePage(props: WelcomePageProps) {
                     ></SignInButton>
                 </div>
                 <p className="mt-4 text-xs underline">Sign up with your email</p>
-                <p className="mt-8 text-xs text-gray-400">
-                    ©️ 2024 I&apos;m not ningning All Rights Reserved.
+                <p className="mt-8 text-xs text-zinc-400">
+                    &copy; 2024 I&apos;m not ningning All Rights Reserved.
                 </p>
             </div>
         </div >
     );
 }
+
+export function Signin(props: SigninProps) {
+    return (
+        <div className='h-screen flex flex-col justify-between text-white bg-black'>
+            <div className='flex flex-col justify-center items-center flex-grow border-b border-slate-800'>
+            <p className='mb-14'>
+                <img src='/images/InstagramLogo.svg' alt='InstagramLogo' />
+            </p>
+            <p>
+                <img src='/images/account.png' alt='Account' />
+            </p>
+            <p className='m-3'>ryota11_07</p>
+            
+            <Button
+                disabled={false}
+                className="py-3 text-white bg-[#3797EF]"
+                text="Log in"
+                onClick={() => props.onSignin()}
+                />
+            
+            <p className='mt-6 text-[#3797EF]'>Switch accounts</p>
+            </div>
+            <p className='pt-3 mb-12 text-center  text-xs text-white/60'>Don't have an account? <span className='text-white'>Sign up.</span></p>
+        </div>
+        )
+    } 
 
 export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputProps) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -260,19 +308,20 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
             <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <div className='mt-24 text-center px-12'>
                 <h2 className='text-lg mb-8'>create your account using your <br />phone number</h2>
-                <Input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={setPhoneNumber}
-                    onInputChange={handlePhoneInputChange}
-                    placeholder="Phone number"
-                    className='m-auto mt-14 mb-6'
-                />
-                <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-8">
-                    <p className='mb-2 text-[9px] text-gray-400'>By tapping "Continue", you agree to our Privacy Policy and Terms of Service</p>
+                <div className='flex items-center justify-center mt-14'>
+                    <p className='border rounded p-2'>🇯🇵 +81</p>
+                    <Input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={setPhoneNumber}
+                        onInputChange={handlePhoneInputChange}
+                        placeholder="Phone number"
+                    />
+                </div>
+                <div className="w-[327px] fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-8">
+                    <p className='mb-2 text-[9px] text-zinc-400'>By tapping "Continue", you agree to our Privacy Policy and Terms of Service</p>
                     <Button
                         disabled={phoneNumber.replace(/\s/g, '').length !== 11}
-                        // className="fixed bottom-4 left-1/2 transform -translate-x-1/2"
                         wFull
                         text={'Continue'}
                         onClick={savePhoneNumber}
@@ -362,16 +411,16 @@ export function VerificationCodeInput({
                 </div>
                 <button
                     onClick={regenerateCode}
-                    className="mt-4 text-xs text-gray-600"
+                    className="mt-4 text-xs text-zinc-600"
                 >
-                    Didn&apos;t receive the code?<span className='pl-1 text-gray-500 underline'>Resend now.</span>
+                    Didn&apos;t receive the code?<span className='pl-1 text-zinc-400 underline'>Resend now.</span>
                 </button>
             </div>
         </div>
     );
 }
 
-export function PersonalInfoStep() {
+export function PersonalInfoStep(props: PersonalInfoStepProps) {
     return (
         <div>
             <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
@@ -384,13 +433,13 @@ export function PersonalInfoStep() {
                 disabled={false}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
                 text="OK"
-                onClick={() => { }}
-            />
+                onClick={() => props.onPersonalInfoStep()}
+                />
         </div>
     )
 }
 
-export function GenderAndAgeSelection() {
+export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
     const [selectedGender, setSelectedGender] = useState<string | null>(null);
     const [selectedAgeGroup, setSelectedAgeGroup] = useState<string | null>(null);
 
@@ -421,6 +470,9 @@ export function GenderAndAgeSelection() {
                         src="../images/man.svg"
                         alt="man"
                         className="w-16 h-16 mt-4"
+                        style={{
+                            filter: selectedGender === '男性' ? 'invert(1)' : 'none',
+                        }}
                     />
                 </p>
                 <p
@@ -431,57 +483,79 @@ export function GenderAndAgeSelection() {
                     <img
                         src="../images/woman.svg"
                         alt="woman"
-                        className={`w-16 h-16 mt-4`}
+                        className="w-16 h-16 mt-4"
+                        style={{
+                            filter: selectedGender === '女性' ? 'invert(1)' : 'none',
+                        }}
                     />
                 </p>
             </div>
 
             <div className='mt-12 text-center'>
-                <p>Select your age group.</p>
+                <p className='mb-4'>Select your age group.</p>
                 <Dropdown
                     value={selectedAgeGroup}
                     options={ageOptions}
                     onChange={(e) => setSelectedAgeGroup(e.value)}
                     placeholder="20代"
                     // TODO importを使って無理やり幅をつけているが年齢選択後の見た目がビミョー。
-                    className={style.gender}
+                    className={style.gender }
                 />
             </div>
             <Button
                 disabled={false}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
                 text="Next"
-                onClick={() => { }}
-            />
+                onClick={() => props.onGenderAndAgeSelection()}
+                />
         </div>
     );
 }
 
-export function UsernameSetup() {
+export function UsernameSetup(props: UsernameSetupProps) {
+    const [instagramName, setInstagramName] = useState<string | null>(null);
+    const handleButtonClick = () => {
+        setInputValue(`@${instagramName || 'ゲスト'}`);
+    };
+    const [inputValue, setInputValue] = useState('');
+
+
     return (
         <div>
             <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
             <p className='mt-24 text-center text-lg font-bold'>Let's set up your Profile</p>
             <img src="../images/userIcon.svg" alt="" className='mx-auto mt-8' />
             <div className='mt-8 px-12 text-center'>
-                <input type='text' placeholder='user name' className='w-full pl-2 text-center text-2xl font-bold border-b-2 border-gray-400 bg-black' />
-                {/* <Input > */}
+                <input
+                    type='text'
+                    placeholder='user name'
+                    value={inputValue}
+                    readOnly
+                    className='w-full mt-4 pl-2 text-center text-2xl font-bold border-b-2 border-gray-400 bg-black text-white'
+                />
             </div>
-            <div className='w-fit mx-auto mt-8 py-1 px-6 flex gap-2 items-center text-black rounded-xl bg-white'>
+
+            <div className='w-fit mx-auto mt-8 px-4 flex gap-2 items-center text-black rounded-xl bg-white'>
                 <FaInstagram />
-                <p>Use the same as Instagram</p>
+                <Button
+                    disabled={false}
+                    className="w-fit"
+                    text="Use the same as Instagram"
+                    onClick={handleButtonClick}
+                />
             </div>
+
             <Button
                 disabled={false}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
                 text="Next"
-                onClick={() => { }}
+                onClick={() => props.onUsernameSetup()}
             />
         </div>
     )
 }
 
-export function PermissionsRequest() {
+export function PermissionsRequest(props: PermissionsRequestProps) {
     return (
         <div>
             <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
@@ -513,7 +587,7 @@ export function PermissionsRequest() {
             <Button
                 disabled={false}
                 text='Continue'
-                onClick={() => { }}
+                onClick={() => props.onPermissionsRequest()}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
             />
         </div>

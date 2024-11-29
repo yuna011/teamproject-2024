@@ -4,7 +4,6 @@
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: #3570C6;
     transition: .3s;
     transform: translateX(-50%);
 }
