@@ -29,3 +29,7 @@ body {
 .p-dropdown-items-wrapper {
   max-height: 30rem !important;
 }
+
+.p-dropdown-label.p-inputtext {
+  color: #fff !important;
+}

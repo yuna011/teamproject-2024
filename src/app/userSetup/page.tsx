@@ -1,19 +1,18 @@
 'use client'
 import { useState, useEffect, useRef, ChangeEvent, RefObject } from 'react';
-// import checkboxStyle from '../styles/checkbox.module.css';
 import style from '@/app/styles/primereact.module.css'
 import { auth, database } from '../../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import Button from '@/app/component/common/Button';
 import SignInButton from '@/app/component/common/userSetup/signInButton';
-import Input from '../component/common/Input';
 import { Notification } from '../component/Notification';
 import { get, ref, set } from 'firebase/database';
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
 import { FaLocationArrow, FaBell, FaBluetooth, FaInstagram, FaApple } from 'react-icons/fa';
 import { FcGoogle } from "react-icons/fc";
-
+import Image from 'next/image';
+import AccessModal from '@/app/component/common/userSetup/accessModal'
 
 type WelcomePageProps = {
     onWelcomePage: () => void;
@@ -50,12 +49,8 @@ type GenderAndAgeSelectionProps = {
 
 type UsernameSetupProps = {
     onUsernameSetup: () => void;
+    instagramName: string | null;
 };
-
-type PermissionsRequestProps = {
-    onPermissionsRequest: () => void;
-};
-
 
 export default function CreateAccount() {
     const [index, setIndex] = useState<number>(0);
@@ -98,7 +93,7 @@ export default function CreateAccount() {
 
     function handleCodeGenerated(code: string) {
         setPincode(code);
-        setIndex(2);
+        setIndex(4);
         setNotificationVisible(true); // 新しいコード生成で通知を表示
     };
 
@@ -107,20 +102,20 @@ export default function CreateAccount() {
     };
 
     // デバッグ用
-    function handleIndexChange(newIndex: number) {
-        setIndex(newIndex);
-    };
+    // function handleIndexChange(newIndex: number) {
+    //     setIndex(newIndex);
+    // };
 
     // 3秒後にindexを更新するuseEffect
-    // useEffect(() => {
-    //     if (index === 0) {
-    //         const timer = setTimeout(() => {
-    //             setIndex((prevIndex) => prevIndex + 1);
-    //         }, 3000);
+    useEffect(() => {
+        if (index === 2) {
+            const timer = setTimeout(() => {
+                setIndex((prevIndex) => prevIndex + 1);
+            }, 3000);
 
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [index]);
+            return () => clearTimeout(timer);
+        }
+    }, [index]);
 
     useEffect(() => {
         if (notificationVisible) {
@@ -132,7 +127,7 @@ export default function CreateAccount() {
     return (
         <div>
             {/* アニメーションつけたらページ変更できないので一時的にz-indexを入れてます */}
-            <div className='absolute bg-white top-0 opacity-50 z-10'>
+            {/* <div className='absolute bg-white top-0 opacity-50 z-10'>
                 <h2 className="text-center font-bold text-lg text-black">
                     現在のインデックス: {index}
                 </h2>
@@ -147,7 +142,7 @@ export default function CreateAccount() {
                         </button>
                     ))}
                 </div>
-            </div>
+            </div> */}
             {notificationVisible && (
                 <Notification
                     notificationApp="メッセージ"
@@ -155,10 +150,10 @@ export default function CreateAccount() {
                 />
             )}
             {index === 0 && <WelcomePage onWelcomePage={nextPage} />}
-            {index === 1 && <Signin onSignin={nextPage}/>}
+            {index === 1 && <Signin onSignin={nextPage} />}
             {index === 2 && (
                 <div >
-                    <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
+                    <Image src="/images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' width={50} height={50} />
                     <h1 className='mt-12 ml-6 leading-10 text-2xl font-bold'>
                         Welcome<br />@{instagramName || 'ゲスト'}
                     </h1>
@@ -177,8 +172,8 @@ export default function CreateAccount() {
             )}
             {index === 5 && <PersonalInfoStep onPersonalInfoStep={nextPage} />}
             {index === 6 && <GenderAndAgeSelection onGenderAndAgeSelection={nextPage} />}
-            {index === 7 && <UsernameSetup onUsernameSetup={nextPage} />}
-            {index === 8 && <PermissionsRequest onPermissionsRequest={nextPage} />}
+            {index === 7 && <UsernameSetup onUsernameSetup={nextPage} instagramName={instagramName} />}
+            {index === 8 && <PermissionsRequest />}
             {index === 9 && <CompletionScreen />}
         </div>
     );
@@ -194,7 +189,7 @@ export function WelcomePage(props: WelcomePageProps) {
         return () => clearTimeout(timer);
     }, []);
 
-    
+
 
     return (
         <div className="relative text-center" style={{ minHeight: '100vh' }}>
@@ -205,9 +200,11 @@ export function WelcomePage(props: WelcomePageProps) {
                     transform: animationComplete ? 'translateY(-30%)' : 'translateY(0)',
                 }}
             >
-                <img
-                    src="../images/Me..svg"
+                <Image
+                    src="/images/Me..svg"
                     alt="Me."
+                    width={50}
+                    height={50}
                 />
             </div>
             <div
@@ -254,27 +251,30 @@ export function Signin(props: SigninProps) {
     return (
         <div className='h-screen flex flex-col justify-between text-white bg-black'>
             <div className='flex flex-col justify-center items-center flex-grow border-b border-slate-800'>
-            <p className='mb-14'>
-                <img src='/images/InstagramLogo.svg' alt='InstagramLogo' />
-            </p>
-            <p>
-                <img src='/images/account.png' alt='Account' />
-            </p>
-            <p className='m-3'>ryota11_07</p>
-            
-            <Button
-                disabled={false}
-                className="py-3 text-white bg-[#3797EF]"
-                text="Log in"
-                onClick={() => props.onSignin()}
+                <p className='mb-14'>
+                    <Image src='/images/InstagramLogo.svg' alt='InstagramLogo' width={180} height={30} />
+                </p>
+                <Image
+                    src="/images/account.jpg"
+                    alt="説明テキスト"
+                    width={100}
+                    height={100}
+                    className='rounded-full'
                 />
-            
-            <p className='mt-6 text-[#3797EF]'>Switch accounts</p>
+                <p className='m-3'>ryota11_07</p>
+
+                {/* ここでしか青いボタンは登場しないのでコンポーネント化しないことにします */}
+                <button
+                    onClick={() => props.onSignin()}
+                    className='py-2 text-white block w-4/5 rounded bg-[#3797EF]'
+                >Log in</button>
+
+                <p className='mt-6 text-[#3797EF]'>Switch accounts</p>
             </div>
-            <p className='pt-3 mb-12 text-center  text-xs text-white/60'>Don't have an account? <span className='text-white'>Sign up.</span></p>
+            <p className='pt-3 mb-12 text-center  text-xs text-white/60'>Don&apos;t have an account? <span className='text-white'>Sign up.</span></p>
         </div>
-        )
-    } 
+    )
+}
 
 export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputProps) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -305,21 +305,19 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
 
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
+            <Image src="/images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' width={50} height={50} />
             <div className='mt-24 text-center px-12'>
                 <h2 className='text-lg mb-8'>create your account using your <br />phone number</h2>
                 <div className='flex items-center justify-center mt-14'>
-                    <p className='border rounded p-2'>🇯🇵 +81</p>
-                    <Input
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={setPhoneNumber}
-                        onInputChange={handlePhoneInputChange}
-                        placeholder="Phone number"
-                    />
+                    <p className='border rounded py-1 px-2 border-zinc-500 whitespace-nowrap'>🇯🇵 +81</p>
+
+                    <input type="text" value={phoneNumber}
+                        onChange={(e) => handlePhoneInputChange(e)}
+                        className=' block bg-transparent text-[#fff] focus:outline-none text-xl w-2/4 ml-8 placeholder-zinc-400'
+                        placeholder="Phone number" />
                 </div>
                 <div className="w-[327px] fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-8">
-                    <p className='mb-2 text-[9px] text-zinc-400'>By tapping "Continue", you agree to our Privacy Policy and Terms of Service</p>
+                    <p className='mb-2 text-[9px] text-zinc-400'>By tapping &quot;Continue&quot;, you agree to our Privacy Policy and Terms of Service</p>
                     <Button
                         disabled={phoneNumber.replace(/\s/g, '').length !== 11}
                         wFull
@@ -333,7 +331,6 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
 }
 
 export function VerificationCodeInput({
-    phoneNumber,
     pincode,
     onVerificationSuccess,
     onCodeRegenerated
@@ -434,7 +431,7 @@ export function PersonalInfoStep(props: PersonalInfoStepProps) {
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
                 text="OK"
                 onClick={() => props.onPersonalInfoStep()}
-                />
+            />
         </div>
     )
 }
@@ -458,7 +455,7 @@ export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
 
     return (
         <div className='font-bold'>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
+            <Image src="/images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' width={50} height={50} />
             <p className='mt-24 text-center text-lg'>Select your gender.</p>
             <div className='flex justify-center gap-4 mt-8'>
                 <p
@@ -466,13 +463,15 @@ export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
                     onClick={() => handleGenderSelect('男性')}
                 >
                     <span>man</span> {/* 文字を表示 */}
-                    <img
-                        src="../images/man.svg"
+                    <Image
+                        src="/images/man.svg"
                         alt="man"
                         className="w-16 h-16 mt-4"
                         style={{
                             filter: selectedGender === '男性' ? 'invert(1)' : 'none',
                         }}
+                        width={80}
+                        height={80}
                     />
                 </p>
                 <p
@@ -480,13 +479,15 @@ export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
                     onClick={() => handleGenderSelect('女性')}
                 >
                     <span>woman</span>
-                    <img
-                        src="../images/woman.svg"
+                    <Image
+                        src="/images/woman.svg"
                         alt="woman"
                         className="w-16 h-16 mt-4"
                         style={{
                             filter: selectedGender === '女性' ? 'invert(1)' : 'none',
                         }}
+                        width={80}
+                        height={80}
                     />
                 </p>
             </div>
@@ -499,7 +500,7 @@ export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
                     onChange={(e) => setSelectedAgeGroup(e.value)}
                     placeholder="20代"
                     // TODO importを使って無理やり幅をつけているが年齢選択後の見た目がビミョー。
-                    className={style.gender }
+                    className={style.gender}
                 />
             </div>
             <Button
@@ -507,31 +508,35 @@ export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
                 text="Next"
                 onClick={() => props.onGenderAndAgeSelection()}
-                />
+            />
         </div>
     );
 }
 
 export function UsernameSetup(props: UsernameSetupProps) {
-    const [instagramName, setInstagramName] = useState<string | null>(null);
+
     const handleButtonClick = () => {
-        setInputValue(`@${instagramName || 'ゲスト'}`);
+        // setInputValue(`@${props.instagramName || 'ゲスト'}`);
+        setInputValue(`綾太`)
+        setImagePath('/images/account.jpg');
+        setClassName('mx-auto mt-8 rounded-full')
     };
     const [inputValue, setInputValue] = useState('');
-
+    const [imagePath, setImagePath] = useState('/images/userIcon.svg')
+    const [className, setClassName] = useState('mx-auto mt-8');
 
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
-            <p className='mt-24 text-center text-lg font-bold'>Let's set up your Profile</p>
-            <img src="../images/userIcon.svg" alt="" className='mx-auto mt-8' />
+            <Image src="/images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' width={50} height={50} />
+            <p className='mt-24 text-center text-lg font-bold'>Let&apos;s set up your Profile</p>
+            <Image src={imagePath} alt="" className={className} width={80} height={80} />
             <div className='mt-8 px-12 text-center'>
                 <input
                     type='text'
                     placeholder='user name'
                     value={inputValue}
                     readOnly
-                    className='w-full mt-4 pl-2 text-center text-2xl font-bold border-b-2 border-gray-400 bg-black text-white'
+                    className='w-full mt-4 pl-2 text-center text-xl font-bold border-b-2 border-zinc-400 bg-black text-white focus:outline-none placeholder-zinc-400 font-normal'
                 />
             </div>
 
@@ -539,7 +544,7 @@ export function UsernameSetup(props: UsernameSetupProps) {
                 <FaInstagram />
                 <Button
                     disabled={false}
-                    className="w-fit"
+                    className="w-fit font-normal"
                     text="Use the same as Instagram"
                     onClick={handleButtonClick}
                 />
@@ -555,10 +560,51 @@ export function UsernameSetup(props: UsernameSetupProps) {
     )
 }
 
-export function PermissionsRequest(props: PermissionsRequestProps) {
+export function PermissionsRequest() {
+    // モーダル、というか権限の許可を求めてくるアレ。
+    const [modalState, setModalState] = useState({
+        flag: false, // モーダルは表示状態か？
+        page: 0 // フロント都合の番号
+    });
+
+    // モーダルに表示するテキスト
+    const [modalMessage, setModalMessage] = useState({
+        access: '', // なんの権限にアクセスする？
+        text: '' // 詳細なテキスト
+    })
+
+    useEffect(() => {
+        switch (modalState.page) {
+            case 0:
+                setModalMessage({
+                    access: '位置情報',
+                    text: 'すれちがい検出やユーザー同士の位置情報の共有に利用します。'
+                });
+                break;
+            case 1:
+                setModalMessage({
+                    access: '通知',
+                    text: 'すれちがい時やその他の通知をお知らせします。'
+                });
+                break;
+            case 2:
+                setModalMessage({
+                    access: 'Bluetooth',
+                    text: '正確な位置情報の把握に使用します。'
+                });
+                break;
+            default:
+                setModalMessage({
+                    access: 'デフォルトメッセージ',
+                    text: 'これが表示されるということは...? なにかおかしいね。'
+                });
+                break;
+        }
+    }, [modalState])
+
     return (
         <div>
-            <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
+            <Image src="/images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' width={50} height={50} />
             <p className='mt-8 text-center'>お疲れ様でした</p>
             <p className='mt-8 text-center'>最後に以下を許可して<br />すれちがい通信を楽しみましょう！</p>
             <div className='flex flex-col gap-8 mt-12 m-4 p-4 rounded bg-white/20 '>
@@ -580,16 +626,25 @@ export function PermissionsRequest(props: PermissionsRequestProps) {
                     <FaBluetooth size={50} />
                     <div>
                         <p>Bluetoothの有効化</p>
-                        <p className='mt-2 text-sm'>GPSのみの位置情報は性格ではありません。Bluetoothの有効化によって消費する電力はごくわずかです。</p>
+                        <p className='mt-2 text-sm'>GPSのみの位置情報は正確ではありません。Bluetoothの有効化によって消費する電力はごくわずかです。</p>
                     </div>
                 </div>
             </div>
             <Button
                 disabled={false}
                 text='Continue'
-                onClick={() => props.onPermissionsRequest()}
+                onClick={() => {
+                    // props.onPermissionsRequest()
+                    setModalState({ flag: true, page: 0 })
+                }}
                 className="fixed bottom-4 left-1/2 transform -translate-x-1/2 mb-8"
             />
+            {modalState.flag &&
+                <AccessModal
+                    modalState={modalState} setModalState={setModalState}
+                    access={modalMessage.access} text={modalMessage.text}
+                />
+            }
         </div>
     )
 }
