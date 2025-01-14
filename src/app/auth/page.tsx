@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
 import { ref, set, get, update } from 'firebase/database';
-import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { auth, database } from '../../../firebaseConfig';
 
@@ -23,7 +22,6 @@ export default function AuthPage() {
     const [isRegister, setIsRegister] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [inputValues, setInputValues] = useState<UserData>({
