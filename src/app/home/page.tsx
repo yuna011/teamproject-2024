@@ -3,11 +3,97 @@ import Image from "next/image";
 import Button from "@/app/component/common/Button";
 import Nav from "@/app/component/common/Nav";
 import { FaBell } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TinderCard from "react-tinder-card";
+import { ref, set, get, child } from "firebase/database";
+import { database } from "../../../firebaseConfig";
 
+// 自分以外の位置情報を取得して、近くのユーザーを検索
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // 地球の半径 (km)
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // 距離 (km)
+}
 export default function Home() {
     const [active, setActive] = useState<"home" | "list" | "memory" | "account">("home");
+    const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+    useEffect(() => {
+        const fetchAndCheckNearbyUsers = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        setCurrentLocation({ latitude, longitude });
+
+                        const userId = "your_user_id"; // Firebase Authentication などから取得するユーザーID
+                        const locationRef = ref(database, `users/${userId}/location`);
+                        const timestamp = new Date().toISOString();
+
+                        // 自分の位置情報を保存
+                        await set(locationRef, {
+                            latitude,
+                            longitude,
+                            timestamp,
+                        });
+
+                        console.log("自分の位置情報を記録しました。");
+
+                        // 他のユーザーの位置情報を取得
+                        const dbRef = ref(database);
+                        const snapshot = await get(child(dbRef, "users"));
+
+                        if (snapshot.exists()) {
+                            const users = snapshot.val();
+                            const nearbyUsers = Object.entries(users).filter(([key, user]: [string, any]) => {
+                                if (!user.location || key === userId) return false; // 自分自身を除外
+
+                                const { latitude: otherLat, longitude: otherLon, timestamp: otherTimestamp } = user.location;
+
+                                // 時間フィルタリング: 30分以内
+                                const currentTime = new Date();
+                                const recordedTime = new Date(otherTimestamp);
+                                const timeDiff = (currentTime.getTime() - recordedTime.getTime()) / (1000 * 60); // 分単位
+
+                                if (timeDiff > 30) return false; // 30分以上経過している場合は無視
+
+                                // 距離フィルタリング: 1km以内
+                                const distance = calculateDistance(latitude, longitude, otherLat, otherLon);
+                                return distance <= 1; // 1km以内のユーザー
+                            });
+
+                            // コンソールに近くのユーザーを表示
+                            nearbyUsers.forEach(([key, user]: [string, any]) => {
+                                console.log(`近くに人がいた！：${user.instagramName || "Unknown User"}`);
+                            });
+                        } else {
+                            console.log("他のユーザーの位置情報が見つかりませんでした。");
+                        }
+                    },
+                    (error) => {
+                        console.error("位置情報の取得に失敗しました:", error);
+                    }
+                );
+            } else {
+                console.error("このブラウザは位置情報取得をサポートしていません。");
+            }
+        };
+
+        // 初回実行
+        fetchAndCheckNearbyUsers();
+
+        // 3分ごとにチェック
+        const intervalId = setInterval(fetchAndCheckNearbyUsers, 3 * 60 * 1000);
+
+        // クリーンアップ
+        return () => clearInterval(intervalId);
+    }, []);
 
     const renderContent = () => {
         switch (active) {
@@ -24,11 +110,21 @@ export default function Home() {
         }
     };
 
+    const [start, setStart] = useState(0)
+
 
     return (
         <div>
             <div>{renderContent()}</div>
             <Nav active={active} onChange={(newActive) => setActive(newActive)} />
+            {start !== 2 && <div className="w-full h-screen absolute z-1 fixed top-0 left-0 z-50 flex justify-center items-center" onClick={() => {
+                setStart(start + 1)
+            }}>
+                <div>
+                    {start === 0 && <Image src="/images/explain1.png" alt="Spotify Logo" width={380} height={800} className="w-full" />}
+                    {start === 1 && <Image src="/images/explain2.png" alt="Spotify Logo" width={380} height={800} className="w-full" />}
+                </div>
+            </div>}
         </div>
     );
 }
@@ -135,7 +231,7 @@ function HomePage() {
                         <div
                             className="relative w-full mt-6 rounded-2xl text-xs shadow-lg"
                             style={{
-                                boxShadow: "1px -1px 12px 0px rgba(255, 255, 255, 0.6)",
+                                boxShadow: "1px -1px 12px 0px rgba(255, 255, 255, 0.1)",
                             }}
                         >
                             {/* ユーザー情報 */}
@@ -186,7 +282,7 @@ function HomePage() {
                         <p className="mt-6 underline font-bold">イマイチを表示</p>
                     </div>
                 )}
-            </div>;
+            </div>
         </div>
     )
 }
@@ -216,6 +312,7 @@ function ListPage() {
             </p>
             <Image className="" src="/images/share.svg" alt="" width={30} height={30} />
         </div>
+        <div className=" bg-[#fff] text-black font-bold mx-4 rounded-lg py-2 text-center pl-2 mt-4">新しいリストを追加</div>
         <div className="grid grid-cols-3 gap-1 p-4">
             {images.map((image, index) => (
                 <div key={index} className="relative w-full h-40">
@@ -231,12 +328,12 @@ function ListPage() {
 }
 
 function MemoryPage() {
-    return <div>メモリーページのコンテンツ</div>;
+    return <div>メモリーページのコンテンツ</div>
 }
 
 function AccountPage() {
     return <div>
         <Image src="/images/display.png" className="mt-12" alt="" width={420} height={820} />
 
-    </div>;
+    </div>
 }
