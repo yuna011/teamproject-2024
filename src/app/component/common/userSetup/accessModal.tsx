@@ -5,7 +5,7 @@ type Props = {
     access: string, // アクセスを求めているリソースの名前(例：位置情報・マイクなど)
     text: string, // モーダルに表示する追加テキスト
     modalState: { flag: boolean, page: number }, // モーダルの状態を管理するオブジェクト
-    setModalState: React.Dispatch<React.SetStateAction<string>>
+    setModalState: React.Dispatch<React.SetStateAction<{flag: boolean,page: number}>>
 }
 
 export default function AccessModal(props: Props) {

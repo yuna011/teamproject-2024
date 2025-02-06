@@ -258,32 +258,33 @@
 //     )
 // }
 
-// export default function Main() {
-//     return (
-//         <div className={style.wrap}>
-//             <header><h1>Homework</h1></header>
-//             <div>
-//                 <h2>全てに共通したルール</h2>
-//                 <div className={style.conditions} style={{ marginBottom: 0 }}>
-//                     <p>横幅の表示が崩れているのは、全画面共通でスマホ前提としたスタイルをつけているから。</p>
-//                     <ul>
-//                         <li>型が明示されていないstate、変数・定数は用いない。
-//                             <p>わざわざTsを使うメリットがなくなるから。</p>
-//                         </li>
-//                         <li>classNameはmodule.cssを用いた形式で記述する。</li>
-//                         <li>配列操作において、破壊的なメソッド<small>(push,popなど。詳細はnotionのreact tsページを参照)</small>はそのまま用いない。</li>
-//                     </ul>
-//                 </div>
-//             </div>
-//             {/* componentは同一ファイル内に作ることは基本ない
-//             なぜか: component化するということは、他のページでも汎用的に使うことが目的であるはずだから、componentsフォルダーなどに作る。
-//             */}
-//             <Test01 />
-//             <Test02 />
-//             <Test03 />
-//             <Test04 />
-//             <Test05 />
-//             <Test06 />
-//         </div>
-//     )
-// }
+export default function Main() {
+    return (
+        // <div className={style.wrap}>
+        //     <header><h1>Homework</h1></header>
+        //     <div>
+        //         <h2>全てに共通したルール</h2>
+        //         <div className={style.conditions} style={{ marginBottom: 0 }}>
+        //             <p>横幅の表示が崩れているのは、全画面共通でスマホ前提としたスタイルをつけているから。</p>
+        //             <ul>
+        //                 <li>型が明示されていないstate、変数・定数は用いない。
+        //                     <p>わざわざTsを使うメリットがなくなるから。</p>
+        //                 </li>
+        //                 <li>classNameはmodule.cssを用いた形式で記述する。</li>
+        //                 <li>配列操作において、破壊的なメソッド<small>(push,popなど。詳細はnotionのreact tsページを参照)</small>はそのまま用いない。</li>
+        //             </ul>
+        //         </div>
+        //     </div>
+        //     {/* componentは同一ファイル内に作ることは基本ない
+        //     なぜか: component化するということは、他のページでも汎用的に使うことが目的であるはずだから、componentsフォルダーなどに作る。
+        //     */}
+        //     <Test01 />
+        //     <Test02 />
+        //     <Test03 />
+        //     <Test04 />
+        //     <Test05 />
+        //     <Test06 />
+        // </div>
+        <></>
+    )
+}

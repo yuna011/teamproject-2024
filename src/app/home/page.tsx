@@ -223,9 +223,9 @@ function HomePage() {
                         onSwipe={(dir) => swiped(dir, index)}
                         preventSwipe={["up", "down"]}
                         className="absolute w-full h-full bg-[#000] mt-24"
-                        style={{
-                            zIndex: items.length - index, // カードの順序をz-indexでコントロール
-                        }}
+                        // style={{
+                        //     zIndex: items.length - index, // カードの順序をz-indexでコントロール
+                        // }}
                     >
                         {/* カードコンテンツ */}
                         <div

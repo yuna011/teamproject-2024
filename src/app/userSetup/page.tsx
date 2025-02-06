@@ -180,7 +180,7 @@ export default function CreateAccount() {
 }
 
 
-export function WelcomePage(props: WelcomePageProps) {
+function WelcomePage(props: WelcomePageProps) {
     const [animationComplete, setAnimationComplete] = useState(false);
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -247,7 +247,7 @@ export function WelcomePage(props: WelcomePageProps) {
     );
 }
 
-export function Signin(props: SigninProps) {
+function Signin(props: SigninProps) {
     return (
         <div className='h-screen flex flex-col justify-between text-white bg-black'>
             <div className='flex flex-col justify-center items-center flex-grow border-b border-slate-800'>
@@ -276,7 +276,7 @@ export function Signin(props: SigninProps) {
     )
 }
 
-export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputProps) {
+function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputProps) {
     const [phoneNumber, setPhoneNumber] = useState('');
 
     function handlePhoneInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -330,7 +330,7 @@ export function PhoneInput({ onCodeGenerated, onPhoneNumberSubmit }: PhoneInputP
     );
 }
 
-export function VerificationCodeInput({
+function VerificationCodeInput({
     pincode,
     onVerificationSuccess,
     onCodeRegenerated
@@ -417,7 +417,7 @@ export function VerificationCodeInput({
     );
 }
 
-export function PersonalInfoStep(props: PersonalInfoStepProps) {
+function PersonalInfoStep(props: PersonalInfoStepProps) {
     return (
         <div>
             <img src="../images/Me..svg" alt="" className='w-10 h-10 mx-auto mt-12' />
@@ -436,7 +436,7 @@ export function PersonalInfoStep(props: PersonalInfoStepProps) {
     )
 }
 
-export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
+function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
     const [selectedGender, setSelectedGender] = useState<string | null>(null);
     const [selectedAgeGroup, setSelectedAgeGroup] = useState<string | null>(null);
 
@@ -513,7 +513,7 @@ export function GenderAndAgeSelection(props: GenderAndAgeSelectionProps) {
     );
 }
 
-export function UsernameSetup(props: UsernameSetupProps) {
+function UsernameSetup(props: UsernameSetupProps) {
 
     const handleButtonClick = () => {
         // setInputValue(`@${props.instagramName || 'ゲスト'}`);
@@ -560,7 +560,7 @@ export function UsernameSetup(props: UsernameSetupProps) {
     )
 }
 
-export function PermissionsRequest() {
+function PermissionsRequest() {
     // モーダル、というか権限の許可を求めてくるアレ。
     const [modalState, setModalState] = useState({
         flag: false, // モーダルは表示状態か？
@@ -649,7 +649,7 @@ export function PermissionsRequest() {
     )
 }
 
-export function CompletionScreen() {
+function CompletionScreen() {
     return (
         <div className='h-screen flex flex-col justify-center gap-28 text-center text-3xl font-bold'>
             <h1>おつかれさまでした</h1>
