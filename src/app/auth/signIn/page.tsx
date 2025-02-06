@@ -16,7 +16,7 @@ export default function Signin() {
         </p>
         <p className='mt-6 text-blue-500'>Switch accounts</p>
       </div>
-      <p className='pt-3 mb-12 text-center  text-xs text-white/60'>Don't have an account? <span className='text-white'>Sign up.</span></p>
+      <p className='pt-3 mb-12 text-center  text-xs text-white/60'>Do not have an account? <span className='text-white'>Sign up.</span></p>
     </div>
   )
 } 

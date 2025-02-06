@@ -5,7 +5,7 @@ type Props = {
     access: string, // アクセスを求めているリソースの名前(例：位置情報・マイクなど)
     text: string, // モーダルに表示する追加テキスト
     modalState: { flag: boolean, page: number }, // モーダルの状態を管理するオブジェクト
-    setModalState: React.Dispatch<React.SetStateAction<any>>
+    setModalState: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function AccessModal(props: Props) {
@@ -25,7 +25,7 @@ export default function AccessModal(props: Props) {
                     {/*  OKボタン */}
                     <button className={style.ok} onClick={() => {
                         if (props.modalState.page === 2) {
-                            window.location.href = "/top/";
+                            window.location.href = "/home/";
                             return;
                         }
                         props.setModalState({

@@ -22,7 +22,7 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 export default function Home() {
     const [active, setActive] = useState<"home" | "list" | "memory" | "account">("home");
-    const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
 
     useEffect(() => {
         const fetchAndCheckNearbyUsers = () => {
@@ -30,7 +30,7 @@ export default function Home() {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         const { latitude, longitude } = position.coords;
-                        setCurrentLocation({ latitude, longitude });
+
 
                         const userId = "your_user_id"; // Firebase Authentication などから取得するユーザーID
                         const locationRef = ref(database, `users/${userId}/location`);
@@ -69,7 +69,7 @@ export default function Home() {
                             });
 
                             // コンソールに近くのユーザーを表示
-                            nearbyUsers.forEach(([key, user]: [string, any]) => {
+                            nearbyUsers.forEach(([_, user]: [string, any]) => {
                                 console.log(`近くに人がいた！：${user.instagramName || "Unknown User"}`);
                             });
                         } else {
